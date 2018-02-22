@@ -51,6 +51,12 @@ public enum RelationalOperatorReplacementMutator implements MethodMutatorFactory
   private final RelationalOperator original;
   private final RelationalOperator replacement;
 
+  /**
+   * Class constructor taking two RelationalOperator arguments.
+   *
+   * @param original the operator to replace
+   * @param replacement the operator to use as the replacement
+   */
   public RelationalOperatorReplacementMutator(
       final RelationalOperator original,
       final RelationalOperator replacement) {
