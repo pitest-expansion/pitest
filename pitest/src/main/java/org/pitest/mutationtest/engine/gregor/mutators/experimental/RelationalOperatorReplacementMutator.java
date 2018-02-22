@@ -26,7 +26,8 @@ import org.pitest.mutationtest.engine.gregor.MutationContext;
 
 public enum RelationalOperatorReplacementMutator implements MethodMutatorFactory {
 
-  RELATIONAL_OPERATOR_REPLACEMENT_MUTATOR;
+  // getName() is overridden, so the following line is not actually used.
+  // RELATIONAL_OPERATOR_REPLACEMENT_MUTATOR;
 
   public enum RelationalOperator {
     ACMPEQ("reference-equal"),
@@ -109,7 +110,8 @@ public enum RelationalOperatorReplacementMutator implements MethodMutatorFactory
 
   @Override
   public String getName() {
-    return name();
+    return "RELATIONAL_OPERATOR_" + this.original + "_"
+        + this.replacement + "_MUTATOR";
   }
 
 }
