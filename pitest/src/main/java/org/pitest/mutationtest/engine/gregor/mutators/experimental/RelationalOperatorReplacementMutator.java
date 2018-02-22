@@ -85,10 +85,20 @@ public enum RelationalOperatorReplacementMutator implements MethodMutatorFactory
     return mutations;
   }
 
+  /**
+   * Create the mutator.
+   *
+   * @return MethodVisitor
+   */
   @Override
   public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    return new RelationalOperatorReplacementMethodVisitor(this, context, methodVisitor);
+    return new RelationalOperatorReplacementMethodVisitor(
+        this,
+        context,
+        methodVisitor,
+        "replace relational operator " + this.original.description()
+          + " with " + this.replacement.description());
   }
 
   @Override
