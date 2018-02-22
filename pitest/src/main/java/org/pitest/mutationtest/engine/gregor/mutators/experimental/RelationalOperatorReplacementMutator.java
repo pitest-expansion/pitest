@@ -93,7 +93,8 @@ public enum RelationalOperatorReplacementMutator implements MethodMutatorFactory
 
   @Override
   public String getGloballyUniqueId() {
-    return this.getClass().getName();
+    return this.getClass().getName()
+      + "_" + this.original + "_" + this.replacement;
   }
 
   @Override
