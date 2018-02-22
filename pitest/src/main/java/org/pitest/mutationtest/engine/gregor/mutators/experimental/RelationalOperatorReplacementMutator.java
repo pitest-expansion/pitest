@@ -64,11 +64,12 @@ public enum RelationalOperatorReplacementMutator implements MethodMutatorFactory
     this.replacement = replacement;
   }
 
+  /**
+   * Returns a list of relational operator replacement mutations to apply.
+   *
+   * @return List the list of factories to produce the mutators.
+   */
   public static Iterable<MethodMutatorFactory> makeMutators() {
-    /**
-     * Return a list of relational operator replacement mutations to apply.
-     * @return ArrayList<MethodMutatorFactory> The list of factories to produce the mutators.
-     */
     final List<MethodMutatorFactory> mutations = new ArrayList<>();
     // Get all of the possible values of RelationalOperator.
     final RelationalOperator[] allOperators = RelationalOperator.getEnumConstants();
