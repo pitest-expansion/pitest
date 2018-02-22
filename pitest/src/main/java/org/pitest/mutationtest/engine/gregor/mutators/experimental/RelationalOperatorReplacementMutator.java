@@ -24,7 +24,7 @@ import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
 
-public enum RelationalOperatorReplacementMutator implements MethodMutatorFactory {
+public class RelationalOperatorReplacementMutator implements MethodMutatorFactory {
 
   // getName() is overridden, so the following line is not actually used.
   // RELATIONAL_OPERATOR_REPLACEMENT_MUTATOR;
