@@ -28,6 +28,26 @@ public enum RelationalOperatorReplacementMutator implements MethodMutatorFactory
 
   RELATIONAL_OPERATOR_REPLACEMENT_MUTATOR;
 
+  public enum RelationalOperator {
+    ACMPEQ("reference-equal"),
+    ACMPNE("reference-not-equal"),
+    ICMPEQ("int-equal"),
+    ICMPGE("int-greater-equal"),
+    ICMPGT("int-greater"),
+    ICMPLE("int-less-equal"),
+    ICMPLT("int-less"),
+    ICMPNE("int-not-equal");
+    private String desc;
+
+    private RelationalOperator(String desc) {
+      this.desc = desc;
+    }
+
+    public String description() {
+      return this.desc;
+    }
+  }
+
   @Override
   public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
