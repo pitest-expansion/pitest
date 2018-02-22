@@ -76,12 +76,14 @@ public enum RelationalOperatorReplacementMutator implements MethodMutatorFactory
     final RelationalOperator[] allOperators = RelationalOperator.getEnumConstants();
     // Add all pairings of those values to the mutation list.
     for (int i = 0; i < mutations.length; i++) {
-      for (int j = i + 1; j < mutations.length; j++) {
-        mutations.add(
-            new RelationalOperatorReplacementMutator(
-                allOperators[i],
-                allOperators[j]));
-          }
+      for (int j = 0; j < mutations.length; j++) {
+        if (i != j) {
+          mutations.add(
+              new RelationalOperatorReplacementMutator(
+                  allOperators[i],
+                  allOperators[j]));
+        }
+      }
     }
     return mutations;
   }
