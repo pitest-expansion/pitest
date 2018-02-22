@@ -14,8 +14,8 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -46,6 +46,36 @@ public enum RelationalOperatorReplacementMutator implements MethodMutatorFactory
     public String description() {
       return this.desc;
     }
+  }
+
+  private final RelationalOperator original;
+  private final RelationalOperator replacement;
+
+  public RelationalOperatorReplacementMutator(
+      final RelationalOperator original,
+      final RelationalOperator replacement) {
+    this.original = original;
+    this.replacement = replacement;
+  }
+
+  public static Iterable<MethodMutatorFactory> makeMutators() {
+    /**
+     * Return a list of relational operator replacement mutations to apply.
+     * @return ArrayList<MethodMutatorFactory> The list of factories to produce the mutators.
+     */
+    final List<MethodMutatorFactory> mutations = new ArrayList<>();
+    // Get all of the possible values of RelationalOperator.
+    final RelationalOperator[] allOperators = RelationalOperator.getEnumConstants();
+    // Add all pairings of those values to the mutation list.
+    for (int i = 0; i < mutations.length; i++) {
+      for (int j = i + 1; j < mutations.length; j++) {
+        mutations.add(
+            new RelationalOperatorReplacementMutator(
+                allOperators[i],
+                allOperators[j]));
+          }
+    }
+    return mutations;
   }
 
   @Override
