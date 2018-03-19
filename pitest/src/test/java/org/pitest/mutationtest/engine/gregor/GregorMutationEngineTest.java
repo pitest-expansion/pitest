@@ -24,6 +24,7 @@ import org.pitest.mutationtest.engine.gregor.config.DefaultMutationEngineConfigu
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.augmentation.AORMutator;
 
 public class GregorMutationEngineTest {
 
@@ -32,7 +33,7 @@ public class GregorMutationEngineTest {
   @Test
   public void shouldReportNamesOfSuppliedMutators() {
     final Collection<MethodMutatorFactory> mutators = Mutator
-        .fromStrings(Arrays.asList("CONDITIONALS_BOUNDARY", "MATH"));
+        .fromStrings(Arrays.asList("CONDITIONALS_BOUNDARY", "MATH","ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR"));
     final DefaultMutationEngineConfiguration config = new DefaultMutationEngineConfiguration(
         i -> true, mutators);
     this.testee = new GregorMutationEngine(config);

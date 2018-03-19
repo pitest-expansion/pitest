@@ -53,6 +53,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiver
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveSwitchMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.augmentation.AORMutator;
 
 import org.pitest.mutationtest.engine.gregor.mutators.augmentation.AODMutator;
 public final class Mutator {
@@ -61,10 +62,12 @@ public final class Mutator {
 
     static {
         /**
-         * Set of AOD Mutators
+         * Set of AOD, AOR Mutators
          */
         add("AOD_FIRST", new AODMutator(AODMutator.MutantType.FIRST));
         add("AOD_LAST", new AODMutator(AODMutator.MutantType.LAST));
+        add("ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR",AORMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR);
+        
 
         /**
          * Default mutator that inverts the negation of integer and floating point
@@ -198,7 +201,8 @@ public final class Mutator {
         return group(InvertNegsMutator.INVERT_NEGS_MUTATOR, ReturnValsMutator.RETURN_VALS_MUTATOR,
                 MathMutator.MATH_MUTATOR, VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR,
                 NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
-                ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR, IncrementsMutator.INCREMENTS_MUTATOR);
+                ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR, IncrementsMutator.INCREMENTS_MUTATOR,
+                AORMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR);
     }
 
     public static Collection<MethodMutatorFactory> aod() {
@@ -212,7 +216,8 @@ public final class Mutator {
     public static Collection<MethodMutatorFactory> newDefaults() {
         return combine(group(InvertNegsMutator.INVERT_NEGS_MUTATOR, MathMutator.MATH_MUTATOR,
                 VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR, NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
-                ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR, IncrementsMutator.INCREMENTS_MUTATOR),
+                ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR, IncrementsMutator.INCREMENTS_MUTATOR,
+                AORMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR),
                 betterReturns());
     }
 
