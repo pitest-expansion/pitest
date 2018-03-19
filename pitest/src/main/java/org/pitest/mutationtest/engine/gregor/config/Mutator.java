@@ -56,6 +56,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator
 import org.pitest.mutationtest.engine.gregor.mutators.augmentation.AORMutator;
 
 import org.pitest.mutationtest.engine.gregor.mutators.augmentation.AODMutator;
+
 public final class Mutator {
 
     private static final Map<String, Iterable<MethodMutatorFactory>> MUTATORS = new LinkedHashMap<>();
@@ -66,8 +67,7 @@ public final class Mutator {
          */
         add("AOD_FIRST", new AODMutator(AODMutator.MutantType.FIRST));
         add("AOD_LAST", new AODMutator(AODMutator.MutantType.LAST));
-        add("ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR",AORMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR);
-        
+        add("ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR", AORMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR);
 
         /**
          * Default mutator that inverts the negation of integer and floating point
@@ -217,8 +217,7 @@ public final class Mutator {
         return combine(group(InvertNegsMutator.INVERT_NEGS_MUTATOR, MathMutator.MATH_MUTATOR,
                 VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR, NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
                 ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR, IncrementsMutator.INCREMENTS_MUTATOR,
-                AORMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR),
-                betterReturns());
+                AORMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR), betterReturns());
     }
 
     public static Collection<MethodMutatorFactory> betterReturns() {
