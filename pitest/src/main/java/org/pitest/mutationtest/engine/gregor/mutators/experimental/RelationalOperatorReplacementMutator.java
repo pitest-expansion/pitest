@@ -30,8 +30,6 @@ public class RelationalOperatorReplacementMutator implements MethodMutatorFactor
   // RELATIONAL_OPERATOR_REPLACEMENT_MUTATOR;
 
   public enum MutantType {
-    ACMPEQ("reference-equal"),
-    ACMPNE("reference-not-equal"),
     ICMPEQ("int-equal"),
     ICMPGE("int-greater-equal"),
     ICMPGT("int-greater"),
