@@ -24,37 +24,57 @@ import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
 
+enum OpcodeCompareToZero {
+  IFEQ(Opcodes.IFEQ),
+  IFGE(Opcodes.IFGE),
+  IFGT(Opcodes.IFGT),
+  IFLE(Opcodes.IFLE),
+  IFLT(Opcodes.IFLT),
+  IFNE(Opcodes.IFNE);
+
+  private final int opcode;
+
+  OpcodeCompareToZero(int opcode) {
+    this.opcode = opcode;
+  }
+
+  public int getOpcode() {
+    return this.opcode;
+  }
+}
+
+enum OpcodeCompare {
+  IF_ICMPEQ(Opcodes.IF_ICMPEQ),
+  IF_ICMPGE(Opcodes.IF_ICMPGE),
+  IF_ICMPGT(Opcodes.IF_ICMPGT),
+  IF_ICMPLE(Opcodes.IF_ICMPLE),
+  IF_ICMPLT(Opcodes.IF_ICMPLT),
+  IF_ICMPNE(Opcodes.IF_ICMPNE);
+
+  private final int opcode;
+
+  OpcodeCompare(int opcode) {
+    this.opcode = opcode;
+  }
+
+  public int getOpcode() {
+    return this.opcode;
+  }
+}
+
 public class RelationalOperatorReplacementMutator implements MethodMutatorFactory {
 
   // getName() is overridden, so the following line is not actually used.
   // RELATIONAL_OPERATOR_REPLACEMENT_MUTATOR;
 
-  public enum MutantType {
-    ICMPEQ("int-equal"),
-    ICMPGE("int-greater-equal"),
-    ICMPGT("int-greater"),
-    ICMPLE("int-less-equal"),
-    ICMPLT("int-less"),
-    ICMPNE("int-not-equal");
-    private String desc;
-
-    private RelationalOperator(String desc) {
-      this.desc = desc;
-    }
-
-    public String description() {
-      return this.desc;
-    }
-  }
-
-  private final MutantType operator;
+  private final OpcodeCompareToZero operator;
 
   /**
    * Class constructor.
    *
    * @param operator to replace
    */
-  public RelationalOperatorReplacementMutator(final MutantType operator) {
+  public RelationalOperatorReplacementMutator(final OpcodeCompareToZero operator) {
     this.operator = operator;
   }
 
