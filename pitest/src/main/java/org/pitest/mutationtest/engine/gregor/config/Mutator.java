@@ -54,8 +54,8 @@ import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncreme
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveSwitchMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.augmentation.AORMutator;
-
 import org.pitest.mutationtest.engine.gregor.mutators.augmentation.AODMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.augmentation.RORMutator;
 
 public final class Mutator {
 
@@ -63,11 +63,20 @@ public final class Mutator {
 
     static {
         /**
-         * Set of AOD, AOR Mutators
+         * Set of AOD, AOR, ROR Mutators
          */
         add("AOD_FIRST", new AODMutator(AODMutator.MutantType.FIRST));
         add("AOD_LAST", new AODMutator(AODMutator.MutantType.LAST));
         add("ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR", AORMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR);
+        /**
+         * Augmenting mutator that replaces relational operators.
+         */
+        add("ROR_IFEQ", new RORMutator(RORMutator.OpcodeCompareToZero.IFEQ));
+        add("ROR_IFGE", new RORMutator(RORMutator.OpcodeCompareToZero.IFGE));
+        add("ROR_IFGT", new RORMutator(RORMutator.OpcodeCompareToZero.IFGT));
+        add("ROR_IFLE", new RORMutator(RORMutator.OpcodeCompareToZero.IFLE));
+        add("ROR_IFLT", new RORMutator(RORMutator.OpcodeCompareToZero.IFLT));
+        add("ROR_IFNE", new RORMutator(RORMutator.OpcodeCompareToZero.IFNE));
 
         /**
          * Default mutator that inverts the negation of integer and floating point
@@ -176,6 +185,7 @@ public final class Mutator {
         addGroup("ALL", all());
         addGroup("NEW_DEFAULTS", newDefaults());
         addGroup("AOD", aod());
+        addGroup("ROR", ror());
     }
 
     public static Collection<MethodMutatorFactory> all() {
@@ -207,6 +217,17 @@ public final class Mutator {
 
     public static Collection<MethodMutatorFactory> aod() {
         return group(new AODMutator(AODMutator.MutantType.FIRST), new AODMutator(AODMutator.MutantType.LAST));
+    }
+
+    public static Collection<MethodMutatorFactory> ror() {
+        return group(
+                new RORMutator(RORMutator.OpcodeCompareToZero.IFEQ),
+                new RORMutator(RORMutator.OpcodeCompareToZero.IFGE),
+                new RORMutator(RORMutator.OpcodeCompareToZero.IFGT),
+                new RORMutator(RORMutator.OpcodeCompareToZero.IFLE),
+                new RORMutator(RORMutator.OpcodeCompareToZero.IFLT),
+                new RORMutator(
+                        RORMutator.OpcodeCompareToZero.IFNE));
     }
 
     /**
