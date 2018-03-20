@@ -104,7 +104,8 @@ public class RelationalOperatorReplacementMutator implements MethodMutatorFactor
 
   @Override
   public String getName() {
-    return "RELATIONAL_OPERATOR_" + this.operator.name() + "_MUTATOR";
+    return "RELATIONAL_OPERATOR_" + this.operator.name()
+        + "_REPLACEMENT_MUTATOR";
   }
 
 }
