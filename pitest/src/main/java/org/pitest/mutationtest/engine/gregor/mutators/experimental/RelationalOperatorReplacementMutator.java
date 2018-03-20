@@ -47,20 +47,15 @@ public class RelationalOperatorReplacementMutator implements MethodMutatorFactor
     }
   }
 
-  private final MutantType original;
-  private final MutantType replacement;
+  private final MutantType operator;
 
   /**
-   * Class constructor taking two MutantType arguments.
+   * Class constructor.
    *
-   * @param original the operator to replace
-   * @param replacement the operator to use as the replacement
+   * @param operator to replace
    */
-  public RelationalOperatorReplacementMutator(
-      final MutantType original,
-      final MutantType replacement) {
-    this.original = original;
-    this.replacement = replacement;
+  public RelationalOperatorReplacementMutator(final MutantType operator) {
+    this.operator = operator;
   }
 
   /**
