@@ -49,6 +49,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator.Choice;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.augmentation.ArithmeticOperatorReplacementMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiverMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveSwitchMutator;
@@ -100,6 +101,13 @@ public final class Mutator {
      */
     add("CONDITIONALS_BOUNDARY",
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR);
+
+    /**
+     * Default mutator that replaces an arithmetic expression
+     * by each of the other ones.
+     */
+    add("ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR",
+        ArithmeticOperatorReplacementMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR);
 
     /**
      * Default mutator that mutates increments, decrements and assignment
@@ -206,6 +214,7 @@ public final class Mutator {
         VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR,
         NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
+        ArithmeticOperatorReplacementMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR,
         IncrementsMutator.INCREMENTS_MUTATOR);
   }
 
@@ -218,6 +227,7 @@ public final class Mutator {
         VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR,
         NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
+        ArithmeticOperatorReplacementMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR,
         IncrementsMutator.INCREMENTS_MUTATOR), betterReturns());
   }
 
