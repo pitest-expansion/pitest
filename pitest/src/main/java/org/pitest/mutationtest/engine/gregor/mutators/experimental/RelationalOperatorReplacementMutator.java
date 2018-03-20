@@ -14,8 +14,8 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -127,42 +127,24 @@ public class RelationalOperatorReplacementMutator implements MethodMutatorFactor
   }
 
   /**
-   * Returns a list of relational operator replacement mutations to apply.
-   *
-   * @return List the list of factories to produce the mutators.
-   */
-  public static Iterable<MethodMutatorFactory> makeMutators() {
-    final List<MethodMutatorFactory> mutations = new ArrayList<>();
-    // Get all of the possible values of RelationalOperator.
-    final RelationalOperator[] allOperators = RelationalOperator.getEnumConstants();
-    // Add all pairings of those values to the mutation list.
-    for (int i = 0; i < mutations.length; i++) {
-      for (int j = 0; j < mutations.length; j++) {
-        if (i != j) {
-          mutations.add(
-              new RelationalOperatorReplacementMutator(
-                  allOperators[i],
-                  allOperators[j]));
-        }
-      }
-    }
-    return mutations;
-  }
-
-  /**
    * Create the mutator.
    *
    * @return MethodVisitor
    */
   @Override
-  public MethodVisitor create(final MutationContext context,
-      final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    return new RelationalOperatorReplacementMethodVisitor(
-        this,
-        context,
-        methodVisitor,
-        "replace relational operator " + this.original.description()
-          + " with " + this.replacement.description());
+  public MethodVisitor create(
+      final MutationContext context,
+      final MethodInfo methodInfo,
+      final MethodVisitor methodVisitor) {
+    switch (this.operator) {
+    case IFEQ:
+      return new RelationalOperatorReplacementIFEQMethodVisitor(
+          this,
+          context,
+          methodVisitor);
+    default:
+      return null;
+    }
   }
 
   @Override
@@ -178,28 +160,44 @@ public class RelationalOperatorReplacementMutator implements MethodMutatorFactor
 
 }
 
-class RelationalOperatorReplacementMethodVisitor extends AbstractJumpMutator {
-
-  private static final String                     DESCRIPTION = "changed conditional boundary";
-  private static final Map<Integer, Substitution> MUTATIONS   = new HashMap<>();
+class RelationalOperatorReplacementIFEQMethodVisitor extends AbstractJumpMutator {
+  private static final Map<Integer, Substitution> MUTATIONS = new HashMap<>();
+  private static final OpcodeCompareToZero REPLACEMENT_ZERO_OP
+      = OpcodeCompareToZero.IFEQ;
+  private static final OpcodeCompare REPLACEMENT_COMP_OP
+      = OpcodeCompare.IF_ICMPEQ;
 
   static {
-    MUTATIONS.put(Opcodes.IFLE, new Substitution(Opcodes.IFLT, DESCRIPTION));
-    MUTATIONS.put(Opcodes.IFGE, new Substitution(Opcodes.IFGT, DESCRIPTION));
-    MUTATIONS.put(Opcodes.IFGT, new Substitution(Opcodes.IFGE, DESCRIPTION));
-    MUTATIONS.put(Opcodes.IFLT, new Substitution(Opcodes.IFLE, DESCRIPTION));
-    MUTATIONS.put(Opcodes.IF_ICMPLE, new Substitution(Opcodes.IF_ICMPLT,
-        DESCRIPTION));
-    MUTATIONS.put(Opcodes.IF_ICMPGE, new Substitution(Opcodes.IF_ICMPGT,
-        DESCRIPTION));
-    MUTATIONS.put(Opcodes.IF_ICMPGT, new Substitution(Opcodes.IF_ICMPGE,
-        DESCRIPTION));
-    MUTATIONS.put(Opcodes.IF_ICMPLT, new Substitution(Opcodes.IF_ICMPLE,
-        DESCRIPTION));
+    // The operands will seem to be in the wrong order when used in
+    // else conditions.  To the bytecode parser, though, this is not
+    // the case.
+    for (OpcodeCompareToZero original : OpcodeCompareToZero.values()) {
+      if (REPLACEMENT_ZERO_OP != original) {
+        MUTATIONS.put(
+            original.getOpcode(),
+            new Substitution(
+                REPLACEMENT_ZERO_OP.getOpcode(),
+                "Relational operator replacement: Mutated "
+                    + original + " to " + REPLACEMENT_ZERO_OP));
+      }
+    }
+
+    for (OpcodeCompare original : OpcodeCompare.values()) {
+      if (REPLACEMENT_COMP_OP != original) {
+        MUTATIONS.put(
+            original.getOpcode(),
+            new Substitution(
+                REPLACEMENT_COMP_OP.getOpcode(),
+                "Relational operator replacement: Mutated "
+                    + original + " to " + REPLACEMENT_COMP_OP));
+      }
+    }
   }
 
-  RelationalOperatorReplacementMethodVisitor(final MethodMutatorFactory factory,
-      final MutationContext context, final MethodVisitor delegateMethodVisitor) {
+  RelationalOperatorReplacementIFEQMethodVisitor(
+      final MethodMutatorFactory factory,
+      final MutationContext context,
+      final MethodVisitor delegateMethodVisitor) {
     super(factory, context, delegateMethodVisitor);
   }
 
