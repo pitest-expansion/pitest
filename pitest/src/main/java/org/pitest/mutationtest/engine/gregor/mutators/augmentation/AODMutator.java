@@ -68,6 +68,9 @@ public class AODMutator implements MethodMutatorFactory {
     }
 }
 
+/*
+ * Check the operator type, remove it with POP/POP2 and continue the replacement of the operands.
+ */
 class AODFirstMethodVisitor extends AbstractInsnMutator {
 
     AODFirstMethodVisitor(final MethodMutatorFactory factory, final MethodInfo methodInfo,
