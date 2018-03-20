@@ -29,7 +29,7 @@ public class RelationalOperatorReplacementMutator implements MethodMutatorFactor
   // getName() is overridden, so the following line is not actually used.
   // RELATIONAL_OPERATOR_REPLACEMENT_MUTATOR;
 
-  public enum RelationalOperator {
+  public enum MutantType {
     ACMPEQ("reference-equal"),
     ACMPNE("reference-not-equal"),
     ICMPEQ("int-equal"),
@@ -49,18 +49,18 @@ public class RelationalOperatorReplacementMutator implements MethodMutatorFactor
     }
   }
 
-  private final RelationalOperator original;
-  private final RelationalOperator replacement;
+  private final MutantType original;
+  private final MutantType replacement;
 
   /**
-   * Class constructor taking two RelationalOperator arguments.
+   * Class constructor taking two MutantType arguments.
    *
    * @param original the operator to replace
    * @param replacement the operator to use as the replacement
    */
   public RelationalOperatorReplacementMutator(
-      final RelationalOperator original,
-      final RelationalOperator replacement) {
+      final MutantType original,
+      final MutantType replacement) {
     this.original = original;
     this.replacement = replacement;
   }
