@@ -24,96 +24,96 @@ import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
 
-enum OpcodeCompareToZero {
-  IFEQ(Opcodes.IFEQ) {
-    public String toString() {
-      return "==";
-    }
-  },
-  IFGE(Opcodes.IFGE) {
-    public String toString() {
-      return ">=";
-    }
-  },
-  IFGT(Opcodes.IFGT) {
-    public String toString() {
-      return ">";
-    }
-  },
-  IFLE(Opcodes.IFLE) {
-    public String toString() {
-      return "<=";
-    }
-  },
-  IFLT(Opcodes.IFLT) {
-    public String toString() {
-      return "<";
-    }
-  },
-  IFNE(Opcodes.IFNE) {
-    public String toString() {
-      return "!=";
-    }
-  };
-
-  private final int opcode;
-
-  OpcodeCompareToZero(int opcode) {
-    this.opcode = opcode;
-  }
-
-  public int getOpcode() {
-    return this.opcode;
-  }
-}
-
-enum OpcodeCompare {
-  IF_ICMPEQ(Opcodes.IF_ICMPEQ) {
-    public String toString() {
-      return "==";
-    }
-  },
-  IF_ICMPGE(Opcodes.IF_ICMPGE) {
-    public String toString() {
-      return ">=";
-    }
-  },
-  IF_ICMPGT(Opcodes.IF_ICMPGT) {
-    public String toString() {
-      return ">";
-    }
-  },
-  IF_ICMPLE(Opcodes.IF_ICMPLE) {
-    public String toString() {
-      return "<=";
-    }
-  },
-  IF_ICMPLT(Opcodes.IF_ICMPLT) {
-    public String toString() {
-      return "<";
-    }
-  },
-  IF_ICMPNE(Opcodes.IF_ICMPNE) {
-    public String toString() {
-      return "!=";
-    }
-  };
-
-  private final int opcode;
-
-  OpcodeCompare(int opcode) {
-    this.opcode = opcode;
-  }
-
-  public int getOpcode() {
-    return this.opcode;
-  }
-}
-
 public class RelationalOperatorReplacementMutator implements MethodMutatorFactory {
 
   // getName() is overridden, so the following line is not actually used.
   // RELATIONAL_OPERATOR_REPLACEMENT_MUTATOR;
+
+  public enum OpcodeCompareToZero {
+    IFEQ(Opcodes.IFEQ) {
+      public String toString() {
+        return "==";
+      }
+    },
+    IFGE(Opcodes.IFGE) {
+      public String toString() {
+        return ">=";
+      }
+    },
+    IFGT(Opcodes.IFGT) {
+      public String toString() {
+        return ">";
+      }
+    },
+    IFLE(Opcodes.IFLE) {
+      public String toString() {
+        return "<=";
+      }
+    },
+    IFLT(Opcodes.IFLT) {
+      public String toString() {
+        return "<";
+      }
+    },
+    IFNE(Opcodes.IFNE) {
+      public String toString() {
+        return "!=";
+      }
+    };
+
+    private final int opcode;
+
+    OpcodeCompareToZero(int opcode) {
+      this.opcode = opcode;
+    }
+
+    public int getOpcode() {
+      return this.opcode;
+    }
+  }
+
+  public enum OpcodeCompare {
+    IF_ICMPEQ(Opcodes.IF_ICMPEQ) {
+      public String toString() {
+        return "==";
+      }
+    },
+    IF_ICMPGE(Opcodes.IF_ICMPGE) {
+      public String toString() {
+        return ">=";
+      }
+    },
+    IF_ICMPGT(Opcodes.IF_ICMPGT) {
+      public String toString() {
+        return ">";
+      }
+    },
+    IF_ICMPLE(Opcodes.IF_ICMPLE) {
+      public String toString() {
+        return "<=";
+      }
+    },
+    IF_ICMPLT(Opcodes.IF_ICMPLT) {
+      public String toString() {
+        return "<";
+      }
+    },
+    IF_ICMPNE(Opcodes.IF_ICMPNE) {
+      public String toString() {
+        return "!=";
+      }
+    };
+
+    private final int opcode;
+
+    OpcodeCompare(int opcode) {
+      this.opcode = opcode;
+    }
+
+    public int getOpcode() {
+      return this.opcode;
+    }
+  }
 
   private final OpcodeCompareToZero operator;
 
@@ -187,16 +187,17 @@ public class RelationalOperatorReplacementMutator implements MethodMutatorFactor
 
 class RelationalOperatorReplacementIFEQMethodVisitor extends AbstractJumpMutator {
   private static final Map<Integer, Substitution> MUTATIONS = new HashMap<>();
-  private static final OpcodeCompareToZero REPLACEMENT_ZERO_OP
-      = OpcodeCompareToZero.IFEQ;
-  private static final OpcodeCompare REPLACEMENT_COMP_OP
-      = OpcodeCompare.IF_ICMPEQ;
+  private static final RelationalOperatorReplacementMutator.OpcodeCompareToZero REPLACEMENT_ZERO_OP
+      = RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFEQ;
+  private static final RelationalOperatorReplacementMutator.OpcodeCompare REPLACEMENT_COMP_OP
+      = RelationalOperatorReplacementMutator.OpcodeCompare.IF_ICMPEQ;
 
   static {
     // The operands will seem to be in the wrong order when used in
     // else conditions.  To the bytecode parser, though, this is not
     // the case.
-    for (OpcodeCompareToZero original : OpcodeCompareToZero.values()) {
+    for (RelationalOperatorReplacementMutator.OpcodeCompareToZero original
+           : RelationalOperatorReplacementMutator.OpcodeCompareToZero.values()) {
       if (REPLACEMENT_ZERO_OP != original) {
         MUTATIONS.put(
             original.getOpcode(),
@@ -207,7 +208,8 @@ class RelationalOperatorReplacementIFEQMethodVisitor extends AbstractJumpMutator
       }
     }
 
-    for (OpcodeCompare original : OpcodeCompare.values()) {
+    for (RelationalOperatorReplacementMutator.OpcodeCompare original
+           : RelationalOperatorReplacementMutator.OpcodeCompare.values()) {
       if (REPLACEMENT_COMP_OP != original) {
         MUTATIONS.put(
             original.getOpcode(),
@@ -235,16 +237,17 @@ class RelationalOperatorReplacementIFEQMethodVisitor extends AbstractJumpMutator
 
 class RelationalOperatorReplacementIFGEMethodVisitor extends AbstractJumpMutator {
   private static final Map<Integer, Substitution> MUTATIONS = new HashMap<>();
-  private static final OpcodeCompareToZero REPLACEMENT_ZERO_OP
-      = OpcodeCompareToZero.IFGE;
-  private static final OpcodeCompare REPLACEMENT_COMP_OP
-      = OpcodeCompare.IF_ICMPGE;
+  private static final RelationalOperatorReplacementMutator.OpcodeCompareToZero REPLACEMENT_ZERO_OP
+      = RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFGE;
+  private static final RelationalOperatorReplacementMutator.OpcodeCompare REPLACEMENT_COMP_OP
+      = RelationalOperatorReplacementMutator.OpcodeCompare.IF_ICMPGE;
 
   static {
     // The operands will seem to be in the wrong order when used in
     // else conditions.  To the bytecode parser, though, this is not
     // the case.
-    for (OpcodeCompareToZero original : OpcodeCompareToZero.values()) {
+    for (RelationalOperatorReplacementMutator.OpcodeCompareToZero original
+           : RelationalOperatorReplacementMutator.OpcodeCompareToZero.values()) {
       if (REPLACEMENT_ZERO_OP != original) {
         MUTATIONS.put(
             original.getOpcode(),
@@ -255,7 +258,8 @@ class RelationalOperatorReplacementIFGEMethodVisitor extends AbstractJumpMutator
       }
     }
 
-    for (OpcodeCompare original : OpcodeCompare.values()) {
+    for (RelationalOperatorReplacementMutator.OpcodeCompare original
+           : RelationalOperatorReplacementMutator.OpcodeCompare.values()) {
       if (REPLACEMENT_COMP_OP != original) {
         MUTATIONS.put(
             original.getOpcode(),
@@ -283,16 +287,17 @@ class RelationalOperatorReplacementIFGEMethodVisitor extends AbstractJumpMutator
 
 class RelationalOperatorReplacementIFGTMethodVisitor extends AbstractJumpMutator {
   private static final Map<Integer, Substitution> MUTATIONS = new HashMap<>();
-  private static final OpcodeCompareToZero REPLACEMENT_ZERO_OP
-      = OpcodeCompareToZero.IFGT;
-  private static final OpcodeCompare REPLACEMENT_COMP_OP
-      = OpcodeCompare.IF_ICMPGT;
+  private static final RelationalOperatorReplacementMutator.OpcodeCompareToZero REPLACEMENT_ZERO_OP
+      = RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFGT;
+  private static final RelationalOperatorReplacementMutator.OpcodeCompare REPLACEMENT_COMP_OP
+      = RelationalOperatorReplacementMutator.OpcodeCompare.IF_ICMPGT;
 
   static {
     // The operands will seem to be in the wrong order when used in
     // else conditions.  To the bytecode parser, though, this is not
     // the case.
-    for (OpcodeCompareToZero original : OpcodeCompareToZero.values()) {
+    for (RelationalOperatorReplacementMutator.OpcodeCompareToZero original
+           : RelationalOperatorReplacementMutator.OpcodeCompareToZero.values()) {
       if (REPLACEMENT_ZERO_OP != original) {
         MUTATIONS.put(
             original.getOpcode(),
@@ -303,7 +308,8 @@ class RelationalOperatorReplacementIFGTMethodVisitor extends AbstractJumpMutator
       }
     }
 
-    for (OpcodeCompare original : OpcodeCompare.values()) {
+    for (RelationalOperatorReplacementMutator.OpcodeCompare original
+           : RelationalOperatorReplacementMutator.OpcodeCompare.values()) {
       if (REPLACEMENT_COMP_OP != original) {
         MUTATIONS.put(
             original.getOpcode(),
@@ -330,16 +336,17 @@ class RelationalOperatorReplacementIFGTMethodVisitor extends AbstractJumpMutator
 
 class RelationalOperatorReplacementIFLEMethodVisitor extends AbstractJumpMutator {
   private static final Map<Integer, Substitution> MUTATIONS = new HashMap<>();
-  private static final OpcodeCompareToZero REPLACEMENT_ZERO_OP
-      = OpcodeCompareToZero.IFLE;
-  private static final OpcodeCompare REPLACEMENT_COMP_OP
-      = OpcodeCompare.IF_ICMPLE;
+  private static final RelationalOperatorReplacementMutator.OpcodeCompareToZero REPLACEMENT_ZERO_OP
+      = RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFLE;
+  private static final RelationalOperatorReplacementMutator.OpcodeCompare REPLACEMENT_COMP_OP
+      = RelationalOperatorReplacementMutator.OpcodeCompare.IF_ICMPLE;
 
   static {
     // The operands will seem to be in the wrong order when used in
     // else conditions.  To the bytecode parser, though, this is not
     // the case.
-    for (OpcodeCompareToZero original : OpcodeCompareToZero.values()) {
+    for (RelationalOperatorReplacementMutator.OpcodeCompareToZero original
+           : RelationalOperatorReplacementMutator.OpcodeCompareToZero.values()) {
       if (REPLACEMENT_ZERO_OP != original) {
         MUTATIONS.put(
             original.getOpcode(),
@@ -350,7 +357,8 @@ class RelationalOperatorReplacementIFLEMethodVisitor extends AbstractJumpMutator
       }
     }
 
-    for (OpcodeCompare original : OpcodeCompare.values()) {
+    for (RelationalOperatorReplacementMutator.OpcodeCompare original
+           : RelationalOperatorReplacementMutator.OpcodeCompare.values()) {
       if (REPLACEMENT_COMP_OP != original) {
         MUTATIONS.put(
             original.getOpcode(),
@@ -378,16 +386,17 @@ class RelationalOperatorReplacementIFLEMethodVisitor extends AbstractJumpMutator
 
 class RelationalOperatorReplacementIFLTMethodVisitor extends AbstractJumpMutator {
   private static final Map<Integer, Substitution> MUTATIONS = new HashMap<>();
-  private static final OpcodeCompareToZero REPLACEMENT_ZERO_OP
-      = OpcodeCompareToZero.IFLT;
-  private static final OpcodeCompare REPLACEMENT_COMP_OP
-      = OpcodeCompare.IF_ICMPLT;
+  private static final RelationalOperatorReplacementMutator.OpcodeCompareToZero REPLACEMENT_ZERO_OP
+      = RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFLT;
+  private static final RelationalOperatorReplacementMutator.OpcodeCompare REPLACEMENT_COMP_OP
+      = RelationalOperatorReplacementMutator.OpcodeCompare.IF_ICMPLT;
 
   static {
     // The operands will seem to be in the wrong order when used in
     // else conditions.  To the bytecode parser, though, this is not
     // the case.
-    for (OpcodeCompareToZero original : OpcodeCompareToZero.values()) {
+    for (RelationalOperatorReplacementMutator.OpcodeCompareToZero original
+           : RelationalOperatorReplacementMutator.OpcodeCompareToZero.values()) {
       if (REPLACEMENT_ZERO_OP != original) {
         MUTATIONS.put(
             original.getOpcode(),
@@ -398,7 +407,8 @@ class RelationalOperatorReplacementIFLTMethodVisitor extends AbstractJumpMutator
       }
     }
 
-    for (OpcodeCompare original : OpcodeCompare.values()) {
+    for (RelationalOperatorReplacementMutator.OpcodeCompare original
+           : RelationalOperatorReplacementMutator.OpcodeCompare.values()) {
       if (REPLACEMENT_COMP_OP != original) {
         MUTATIONS.put(
             original.getOpcode(),
@@ -426,16 +436,17 @@ class RelationalOperatorReplacementIFLTMethodVisitor extends AbstractJumpMutator
 
 class RelationalOperatorReplacementIFNEMethodVisitor extends AbstractJumpMutator {
   private static final Map<Integer, Substitution> MUTATIONS = new HashMap<>();
-  private static final OpcodeCompareToZero REPLACEMENT_ZERO_OP
-      = OpcodeCompareToZero.IFNE;
-  private static final OpcodeCompare REPLACEMENT_COMP_OP
-      = OpcodeCompare.IF_ICMPNE;
+  private static final RelationalOperatorReplacementMutator.OpcodeCompareToZero REPLACEMENT_ZERO_OP
+      = RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFNE;
+  private static final RelationalOperatorReplacementMutator.OpcodeCompare REPLACEMENT_COMP_OP
+      = RelationalOperatorReplacementMutator.OpcodeCompare.IF_ICMPNE;
 
   static {
     // The operands will seem to be in the wrong order when used in
     // else conditions.  To the bytecode parser, though, this is not
     // the case.
-    for (OpcodeCompareToZero original : OpcodeCompareToZero.values()) {
+    for (RelationalOperatorReplacementMutator.OpcodeCompareToZero original
+           : RelationalOperatorReplacementMutator.OpcodeCompareToZero.values()) {
       if (REPLACEMENT_ZERO_OP != original) {
         MUTATIONS.put(
             original.getOpcode(),
@@ -446,7 +457,8 @@ class RelationalOperatorReplacementIFNEMethodVisitor extends AbstractJumpMutator
       }
     }
 
-    for (OpcodeCompare original : OpcodeCompare.values()) {
+    for (RelationalOperatorReplacementMutator.OpcodeCompare original
+           : RelationalOperatorReplacementMutator.OpcodeCompare.values()) {
       if (REPLACEMENT_COMP_OP != original) {
         MUTATIONS.put(
             original.getOpcode(),

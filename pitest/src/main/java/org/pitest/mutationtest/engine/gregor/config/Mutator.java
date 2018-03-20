@@ -189,12 +189,30 @@ public final class Mutator {
     /**
      * Augmenting mutator that replaces relational operators.
      */
-    add("ROR_IFEQ", new RelationalOperatorReplacement(OpcodeCompareToZero.IFEQ));
-    add("ROR_IFGE", new RelationalOperatorReplacement(OpcodeCompareToZero.IFGE));
-    add("ROR_IFGT", new RelationalOperatorReplacement(OpcodeCompareToZero.IFGT));
-    add("ROR_IFLE", new RelationalOperatorReplacement(OpcodeCompareToZero.IFLE));
-    add("ROR_IFLT", new RelationalOperatorReplacement(OpcodeCompareToZero.IFLT));
-    add("ROR_IFNE", new RelationalOperatorReplacement(OpcodeCompareToZero.IFNE));
+    add(
+        "ROR_IFEQ",
+        new RelationalOperatorReplacementMutator(
+            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFEQ));
+    add(
+        "ROR_IFGE",
+        new RelationalOperatorReplacementMutator(
+            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFGE));
+    add(
+        "ROR_IFGT",
+        new RelationalOperatorReplacementMutator(
+            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFGT));
+    add(
+        "ROR_IFLE",
+        new RelationalOperatorReplacementMutator(
+            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFLE));
+    add(
+        "ROR_IFLT",
+        new RelationalOperatorReplacementMutator(
+            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFLT));
+    add(
+        "ROR_IFNE",
+        new RelationalOperatorReplacementMutator(
+            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFNE));
     addGroup("ROR", ror());
   }
 
@@ -296,12 +314,18 @@ public final class Mutator {
 
   public static Collection<MethodMutatorFactory> ror() {
     return group(
-        new RelationalOperatorReplacementMutator(OpcodeCompareToZero.IFEQ),
-        new RelationalOperatorReplacementMutator(OpcodeCompareToZero.IFGE),
-        new RelationalOperatorReplacementMutator(OpcodeCompareToZero.IFGT),
-        new RelationalOperatorReplacementMutator(OpcodeCompareToZero.IFLE),
-        new RelationalOperatorReplacementMutator(OpcodeCompareToZero.IFLT),
-        new RelationalOperatorReplacementMutator(OpcodeCompareToZero.IFNE));
+        new RelationalOperatorReplacementMutator(
+            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFEQ),
+        new RelationalOperatorReplacementMutator(
+            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFGE),
+        new RelationalOperatorReplacementMutator(
+            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFGT),
+        new RelationalOperatorReplacementMutator(
+            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFLE),
+        new RelationalOperatorReplacementMutator(
+            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFLT),
+        new RelationalOperatorReplacementMutator(
+            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFNE));
   }
 
 }
