@@ -162,6 +162,11 @@ public class RelationalOperatorReplacementMutator implements MethodMutatorFactor
           this,
           context,
           methodVisitor);
+    case IFNE:
+      return new RelationalOperatorReplacementIFNEMethodVisitor(
+          this,
+          context,
+          methodVisitor);
     default:
       return null;
     }
@@ -406,6 +411,54 @@ class RelationalOperatorReplacementIFLTMethodVisitor extends AbstractJumpMutator
   }
 
   RelationalOperatorReplacementIFLTMethodVisitor(
+      final MethodMutatorFactory factory,
+      final MutationContext context,
+      final MethodVisitor delegateMethodVisitor) {
+    super(factory, context, delegateMethodVisitor);
+  }
+
+  @Override
+  protected Map<Integer, Substitution> getMutations() {
+    return MUTATIONS;
+  }
+
+}
+
+class RelationalOperatorReplacementIFNEMethodVisitor extends AbstractJumpMutator {
+  private static final Map<Integer, Substitution> MUTATIONS = new HashMap<>();
+  private static final OpcodeCompareToZero REPLACEMENT_ZERO_OP
+      = OpcodeCompareToZero.IFNE;
+  private static final OpcodeCompare REPLACEMENT_COMP_OP
+      = OpcodeCompare.IF_ICMPNE;
+
+  static {
+    // The operands will seem to be in the wrong order when used in
+    // else conditions.  To the bytecode parser, though, this is not
+    // the case.
+    for (OpcodeCompareToZero original : OpcodeCompareToZero.values()) {
+      if (REPLACEMENT_ZERO_OP != original) {
+        MUTATIONS.put(
+            original.getOpcode(),
+            new Substitution(
+                REPLACEMENT_ZERO_OP.getOpcode(),
+                "Relational operator replacement: Mutated "
+                    + original + " to " + REPLACEMENT_ZERO_OP));
+      }
+    }
+
+    for (OpcodeCompare original : OpcodeCompare.values()) {
+      if (REPLACEMENT_COMP_OP != original) {
+        MUTATIONS.put(
+            original.getOpcode(),
+            new Substitution(
+                REPLACEMENT_COMP_OP.getOpcode(),
+                "Relational operator replacement: Mutated "
+                    + original + " to " + REPLACEMENT_COMP_OP));
+      }
+    }
+  }
+
+  RelationalOperatorReplacementIFNEMethodVisitor(
       final MethodMutatorFactory factory,
       final MutationContext context,
       final MethodVisitor delegateMethodVisitor) {
