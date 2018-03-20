@@ -25,12 +25,36 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
 
 enum OpcodeCompareToZero {
-  IFEQ(Opcodes.IFEQ),
-  IFGE(Opcodes.IFGE),
-  IFGT(Opcodes.IFGT),
-  IFLE(Opcodes.IFLE),
-  IFLT(Opcodes.IFLT),
-  IFNE(Opcodes.IFNE);
+  IFEQ(Opcodes.IFEQ) {
+    public String toString() {
+      return "==";
+    }
+  },
+  IFGE(Opcodes.IFGE) {
+    public String toString() {
+      return ">=";
+    }
+  },
+  IFGT(Opcodes.IFGT) {
+    public String toString() {
+      return ">";
+    }
+  },
+  IFLE(Opcodes.IFLE) {
+    public String toString() {
+      return "<=";
+    }
+  },
+  IFLT(Opcodes.IFLT) {
+    public String toString() {
+      return "<";
+    }
+  },
+  IFNE(Opcodes.IFNE) {
+    public String toString() {
+      return "!=";
+    }
+  };
 
   private final int opcode;
 
@@ -44,12 +68,36 @@ enum OpcodeCompareToZero {
 }
 
 enum OpcodeCompare {
-  IF_ICMPEQ(Opcodes.IF_ICMPEQ),
-  IF_ICMPGE(Opcodes.IF_ICMPGE),
-  IF_ICMPGT(Opcodes.IF_ICMPGT),
-  IF_ICMPLE(Opcodes.IF_ICMPLE),
-  IF_ICMPLT(Opcodes.IF_ICMPLT),
-  IF_ICMPNE(Opcodes.IF_ICMPNE);
+  IF_ICMPEQ(Opcodes.IF_ICMPEQ) {
+    public String toString() {
+      return "==";
+    }
+  },
+  IF_ICMPGE(Opcodes.IF_ICMPGE) {
+    public String toString() {
+      return ">=";
+    }
+  },
+  IF_ICMPGT(Opcodes.IF_ICMPGT) {
+    public String toString() {
+      return ">";
+    }
+  },
+  IF_ICMPLE(Opcodes.IF_ICMPLE) {
+    public String toString() {
+      return "<=";
+    }
+  },
+  IF_ICMPLT(Opcodes.IF_ICMPLT) {
+    public String toString() {
+      return "<";
+    }
+  },
+  IF_ICMPNE(Opcodes.IF_ICMPNE) {
+    public String toString() {
+      return "!=";
+    }
+  };
 
   private final int opcode;
 
