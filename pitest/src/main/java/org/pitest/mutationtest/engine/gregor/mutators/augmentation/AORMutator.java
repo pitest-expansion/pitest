@@ -50,6 +50,11 @@ public enum AORMutator implements MethodMutatorFactory {
 
 }
 
+/*
+ * Replaces each arithmetic operator with all the others. Some have been
+ * implemented in MathMutator.java. For the sake of simplicity, we do it all
+ * over again so five mutations will overlap.
+ */
 class ArithmeticOperatorReplacementMethodVisitor extends AbstractInsnMutator {
 
     private static final Map<Integer, ZeroOperandMutation> MUTATIONS = new HashMap<>();
