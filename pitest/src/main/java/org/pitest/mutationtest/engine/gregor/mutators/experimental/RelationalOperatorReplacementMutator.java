@@ -99,14 +99,12 @@ public class RelationalOperatorReplacementMutator implements MethodMutatorFactor
 
   @Override
   public String getGloballyUniqueId() {
-    return this.getClass().getName()
-      + "_" + this.original + "_" + this.replacement;
+    return this.getClass().getName();
   }
 
   @Override
   public String getName() {
-    return "RELATIONAL_OPERATOR_" + this.original + "_"
-        + this.replacement + "_MUTATOR";
+    return "RELATIONAL_OPERATOR_" + this.operator.name() + "_MUTATOR";
   }
 
 }
