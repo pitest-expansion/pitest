@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2010 Henry Coles
  *
@@ -255,7 +256,7 @@ public final class Mutator {
         NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
         ArithmeticOperatorReplacementMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR,
-        IncrementsMutator.INCREMENTS_MUTATOR, AORMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR);
+        IncrementsMutator.INCREMENTS_MUTATOR);
   }
 
   /**
@@ -268,7 +269,7 @@ public final class Mutator {
         NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
         ArithmeticOperatorReplacementMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR,
-        IncrementsMutator.INCREMENTS_MUTATOR, AORMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR), betterReturns());
+        IncrementsMutator.INCREMENTS_MUTATOR), betterReturns());
   }
 
    public static Collection<MethodMutatorFactory> aod() {
