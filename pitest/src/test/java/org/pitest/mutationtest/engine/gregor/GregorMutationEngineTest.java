@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2011 Henry Coles
  *
@@ -22,9 +23,9 @@ import java.util.Collection;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.gregor.config.DefaultMutationEngineConfiguration;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.ArithmeticOperatorReplacementMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.augmentation.AORMutator;
 
 public class GregorMutationEngineTest {
 
@@ -39,8 +40,10 @@ public class GregorMutationEngineTest {
     this.testee = new GregorMutationEngine(config);
     assertEquals(Arrays.asList(
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR.getName(),
+        ArithmeticOperatorReplacementMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR.getName(),
         MathMutator.MATH_MUTATOR.getName()), this.testee.getMutatorNames());
 
   }
 
 }
+
