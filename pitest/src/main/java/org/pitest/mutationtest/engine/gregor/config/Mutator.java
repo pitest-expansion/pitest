@@ -56,7 +56,6 @@ import org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiver
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveSwitchMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.augmentation.AORMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.augmentation.AODMutator;
 
 public final class Mutator {
@@ -118,7 +117,6 @@ public final class Mutator {
          */
         add("AOD_FIRST", new AODMutator(AODMutator.MutantType.FIRST));
         add("AOD_LAST", new AODMutator(AODMutator.MutantType.LAST));
-        add("ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR", AORMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR);
    /**
      * Augmenting mutator that replaces relational operators.
      */
@@ -297,7 +295,7 @@ public final class Mutator {
         BooleanFalseReturnValsMutator.BOOLEAN_FALSE_RETURN,
         PrimitiveReturnsMutator.PRIMITIVE_RETURN_VALS_MUTATOR,
         EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES,
-        NullReturnValsMutator.NULL_RETURN_VALUES,);
+        NullReturnValsMutator.NULL_RETURN_VALUES);
   }
 
   private static Collection<MethodMutatorFactory> group(
