@@ -49,6 +49,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator.Choice;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.augmentation.AODMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.augmentation.ArithmeticOperatorReplacementMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.augmentation.RelationalOperatorReplacementMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiverMutator;
@@ -214,6 +215,14 @@ public final class Mutator {
         new RelationalOperatorReplacementMutator(
             RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFNE));
     addGroup("ROR", ror());
+
+    /**
+     * Augmenting mutator that replaces binary arithmetic operations
+     * with their individual arguments.
+     */
+    add("AOD_FIRST", new AODMutator(AODMutator.MutantType.FIRST));
+    add("AOD_LAST", new AODMutator(AODMutator.MutantType.LAST));
+    addGroup("AOD", aod());
   }
 
   public static Collection<MethodMutatorFactory> all() {
@@ -296,6 +305,10 @@ public final class Mutator {
 
     FCollection.flatMapTo(names, fromString(), unique);
     return unique;
+  }
+
+  public static Collection<MethodMutatorFactory> aod() {
+    return group(new AODMutator(AODMutator.MutantType.FIRST), new AODMutator(AODMutator.MutantType.LAST));
   }
 
   private static Comparator<? super MethodMutatorFactory> compareId() {
