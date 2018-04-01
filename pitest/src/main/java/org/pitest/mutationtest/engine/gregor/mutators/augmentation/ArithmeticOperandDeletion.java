@@ -32,25 +32,25 @@ import org.pitest.mutationtest.engine.gregor.ZeroOperandMutation;
  * To remove the first operand, remove the operator, swap the two operands and remove the top one.
  * Because the second operand is above the first operand on the stack.
  */
-public class AODMutator implements MethodMutatorFactory {
+public class ArithmeticOperandDeletion implements MethodMutatorFactory {
 
     public enum MutantType {
 
-        FIRST, LAST;
+        REMOVE_FIRST_MUTATOR, REMOVE_LAST_MUTATOR;
     }
 
     private final MutantType mutatorType;
 
-    public AODMutator(MutantType mt) {
+    public ArithmeticOperandDeletion(MutantType mt) {
         this.mutatorType = mt;
     }
 
     @Override
     public MethodVisitor create(final MutationContext context, final MethodInfo methodInfo,
             final MethodVisitor methodVisitor) {
-        if (this.mutatorType == AODMutator.MutantType.FIRST) {
+        if (this.mutatorType == ArithmeticOperandDeletion.MutantType.REMOVE_FIRST_MUTATOR) {
             return new AODFirstMethodVisitor(this, methodInfo, context, methodVisitor);
-        } else if (this.mutatorType == AODMutator.MutantType.LAST) {
+        } else if (this.mutatorType == ArithmeticOperandDeletion.MutantType.REMOVE_LAST_MUTATOR) {
             return new AODLastMethodVisitor(this, context, methodVisitor);
         } else {
             return null;
@@ -64,7 +64,7 @@ public class AODMutator implements MethodMutatorFactory {
 
     @Override
     public String getName() {
-        return "AOD_MUTATOR - " + this.mutatorType.name();
+        return "ArithmeticOperandDeletion - " + this.mutatorType.name();
     }
 }
 
@@ -82,49 +82,49 @@ class AODFirstMethodVisitor extends AbstractInsnMutator {
 
     static {
         MUTATIONS.put(Opcodes.IADD, new InsnSubstitution(Opcodes.POP,
-                "AOD_LAST: Remove the second operand from an addition formula (int)"));
+                "REMOVE_SECOND_OPERATOR: Remove the second operand from an addition formula (int)"));
         MUTATIONS.put(Opcodes.DADD, new InsnSubstitution(Opcodes.POP2,
-                "AOD_LAST: Remove the second operand from an addition formula (double)"));
+                "REMOVE_SECOND_OPERATOR: Remove the second operand from an addition formula (double)"));
         MUTATIONS.put(Opcodes.FADD, new InsnSubstitution(Opcodes.POP,
-                "AOD_LAST: Remove the second operand from an addition formula (float)"));
+                "REMOVE_SECOND_OPERATOR: Remove the second operand from an addition formula (float)"));
         MUTATIONS.put(Opcodes.LADD, new InsnSubstitution(Opcodes.POP2,
-                "AOD_LAST: Remove the second operand from an addition formula (long)"));
+                "REMOVE_SECOND_OPERATOR: Remove the second operand from an addition formula (long)"));
 
         MUTATIONS.put(Opcodes.ISUB, new InsnSubstitution(Opcodes.POP,
-                "AOD_LAST: Remove the second operand from a subtraction formula (int)"));
+                "REMOVE_SECOND_OPERATOR: Remove the second operand from a subtraction formula (int)"));
         MUTATIONS.put(Opcodes.DSUB, new InsnSubstitution(Opcodes.POP2,
-                "AOD_LAST: Remove the second operand from a subtraction formula (double)"));
+                "REMOVE_SECOND_OPERATOR: Remove the second operand from a subtraction formula (double)"));
         MUTATIONS.put(Opcodes.FSUB, new InsnSubstitution(Opcodes.POP,
-                "AOD_LAST: Remove the second operand from a subtraction formula (float)"));
+                "REMOVE_SECOND_OPERATOR: Remove the second operand from a subtraction formula (float)"));
         MUTATIONS.put(Opcodes.LSUB, new InsnSubstitution(Opcodes.POP2,
-                "AOD_LAST: Remove the second operand from a subtraction formula (long)"));
+                "REMOVE_SECOND_OPERATOR: Remove the second operand from a subtraction formula (long)"));
 
         MUTATIONS.put(Opcodes.IMUL, new InsnSubstitution(Opcodes.POP,
-                "AOD_LAST: Remove the second operand from a multiplication formula (int)"));
+                "REMOVE_SECOND_OPERATOR: Remove the second operand from a multiplication formula (int)"));
         MUTATIONS.put(Opcodes.DMUL, new InsnSubstitution(Opcodes.POP2,
-                "AOD_LAST: Remove the second operand from a multiplication formula (double)"));
+                "REMOVE_SECOND_OPERATOR: Remove the second operand from a multiplication formula (double)"));
         MUTATIONS.put(Opcodes.FMUL, new InsnSubstitution(Opcodes.POP,
-                "AOD_LAST: Remove the second operand from a multiplication formula (float)"));
+                "REMOVE_SECOND_OPERATOR: Remove the second operand from a multiplication formula (float)"));
         MUTATIONS.put(Opcodes.LMUL, new InsnSubstitution(Opcodes.POP2,
-                "AOD_LAST: Remove the second operand from a multiplication formula (long)"));
+                "REMOVE_SECOND_OPERATOR: Remove the second operand from a multiplication formula (long)"));
 
         MUTATIONS.put(Opcodes.IDIV, new InsnSubstitution(Opcodes.POP,
-                "AOD_LAST: Remove the second operand from a division formula (int)"));
+                "REMOVE_SECOND_OPERATOR: Remove the second operand from a division formula (int)"));
         MUTATIONS.put(Opcodes.DDIV, new InsnSubstitution(Opcodes.POP2,
-                "AOD_LAST: Remove the second operand from a division formula (double)"));
+                "REMOVE_SECOND_OPERATOR: Remove the second operand from a division formula (double)"));
         MUTATIONS.put(Opcodes.FDIV, new InsnSubstitution(Opcodes.POP,
-                "AOD_LAST: Remove the second operand from a division formula (float)"));
+                "REMOVE_SECOND_OPERATOR: Remove the second operand from a division formula (float)"));
         MUTATIONS.put(Opcodes.LDIV, new InsnSubstitution(Opcodes.POP2,
-                "AOD_LAST: Remove the second operand from a division formula (long)"));
+                "REMOVE_SECOND_OPERATOR: Remove the second operand from a division formula (long)"));
 
         MUTATIONS.put(Opcodes.IREM,
-                new InsnSubstitution(Opcodes.POP, "AOD_LAST: Remove the second operand from a modulus formula (int)"));
+                new InsnSubstitution(Opcodes.POP, "REMOVE_SECOND_OPERATOR: Remove the second operand from a modulus formula (int)"));
         MUTATIONS.put(Opcodes.DREM, new InsnSubstitution(Opcodes.POP2,
-                "AOD_LAST: Remove the second operand from a modulus formula (double)"));
+                "REMOVE_SECOND_OPERATOR: Remove the second operand from a modulus formula (double)"));
         MUTATIONS.put(Opcodes.FREM, new InsnSubstitution(Opcodes.POP,
-                "AOD_LAST: Remove the second operand from a modulus formula (float)"));
+                "REMOVE_SECOND_OPERATOR: Remove the second operand from a modulus formula (float)"));
         MUTATIONS.put(Opcodes.LREM, new InsnSubstitution(Opcodes.POP2,
-                "AOD_LAST: Remove the second operand from a modulus formula (long)"));
+                "REMOVE_SECOND_OPERATOR: Remove the second operand from a modulus formula (long)"));
     }
 
     @Override
@@ -173,7 +173,7 @@ class AODLastMethodVisitor extends MethodVisitor {
 
     private void replaceSmallAddOperand(int opcode) {
         final MutationIdentifier muID = this.context.registerMutation(factory,
-                "AOD_MUTATOR: Remove the first operand from an addition formula");
+                "REMOVE_FIRST_OPERAND: Remove the first operand from an addition formula");
 
         if (this.context.shouldMutate(muID)) {
             removeSmallFirstOperand();
@@ -184,7 +184,7 @@ class AODLastMethodVisitor extends MethodVisitor {
 
     private void replaceSmallSubOperand(int opcode) {
         final MutationIdentifier muID = this.context.registerMutation(factory,
-                "AOD_FIRST: Remove the first operand from a subtraction formula");
+                "REMOVE_FIRST_OPERAND: Remove the first operand from a subtraction formula");
 
         if (this.context.shouldMutate(muID)) {
             removeSmallFirstOperand();
@@ -195,7 +195,7 @@ class AODLastMethodVisitor extends MethodVisitor {
 
     private void replaceSmallMulOperand(int opcode) {
         final MutationIdentifier muID = this.context.registerMutation(factory,
-                "AOD_FIRST: Remove the first operand from a multiplication formula");
+                "REMOVE_FIRST_OPERAND: Remove the first operand from a multiplication formula");
 
         if (this.context.shouldMutate(muID)) {
             removeSmallFirstOperand();
@@ -206,7 +206,7 @@ class AODLastMethodVisitor extends MethodVisitor {
 
     private void replaceSmallDivOperand(int opcode) {
         final MutationIdentifier muID = this.context.registerMutation(factory,
-                "AOD_FIRST: Remove the first operand from a division formula");
+                "REMOVE_FIRST_OPERAND: Remove the first operand from a division formula");
 
         if (this.context.shouldMutate(muID)) {
             removeSmallFirstOperand();
@@ -217,7 +217,7 @@ class AODLastMethodVisitor extends MethodVisitor {
 
     private void replaceSmallRemOperand(int opcode) {
         final MutationIdentifier muID = this.context.registerMutation(factory,
-                "AOD_FIRST: Remove the first operand from a modulus formula");
+                "REMOVE_FIRST_OPERAND: Remove the first operand from a modulus formula");
 
         if (this.context.shouldMutate(muID)) {
             removeSmallFirstOperand();
@@ -228,7 +228,7 @@ class AODLastMethodVisitor extends MethodVisitor {
 
     private void replaceLongOperand(int opcode) {
         final MutationIdentifier muID = this.context.registerMutation(factory,
-                "AOD_FIRST: Remove the first operand of from a formula involving longs");
+                "REMOVE_FIRST_OPERAND: Remove the first operand of from a formula involving longs");
 
         if (this.context.shouldMutate(muID)) {
             removeLargeFirstOperand();
@@ -239,7 +239,7 @@ class AODLastMethodVisitor extends MethodVisitor {
 
     private void replaceDoubleOperand(int opcode) {
         final MutationIdentifier muID = this.context.registerMutation(factory,
-                "AOD_FIRST: Remove the first operand of a formula involving doubles");
+                "REMOVE_FIRST_OPERAND: Remove the first operand of a formula involving doubles");
 
         if (this.context.shouldMutate(muID)) {
             removeLargeFirstOperand();
