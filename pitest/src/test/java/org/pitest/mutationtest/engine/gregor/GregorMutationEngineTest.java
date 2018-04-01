@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2011 Henry Coles
  *
@@ -22,6 +23,7 @@ import java.util.Collection;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.gregor.config.DefaultMutationEngineConfiguration;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
+import org.pitest.mutationtest.engine.gregor.mutators.augmentation.ArithmeticOperatorReplacementMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
 
@@ -32,14 +34,16 @@ public class GregorMutationEngineTest {
   @Test
   public void shouldReportNamesOfSuppliedMutators() {
     final Collection<MethodMutatorFactory> mutators = Mutator
-        .fromStrings(Arrays.asList("CONDITIONALS_BOUNDARY", "MATH"));
+        .fromStrings(Arrays.asList("CONDITIONALS_BOUNDARY", "MATH","ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR"));
     final DefaultMutationEngineConfiguration config = new DefaultMutationEngineConfiguration(
         i -> true, mutators);
     this.testee = new GregorMutationEngine(config);
     assertEquals(Arrays.asList(
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR.getName(),
+        ArithmeticOperatorReplacementMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR.getName(),
         MathMutator.MATH_MUTATOR.getName()), this.testee.getMutatorNames());
 
   }
 
 }
+

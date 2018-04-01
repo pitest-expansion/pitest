@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2010 Henry Coles
  *
@@ -49,10 +50,13 @@ import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator.Choice;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.augmentation.ArithmeticOperatorReplacementMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.augmentation.RelationalOperatorReplacementMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiverMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveSwitchMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.augmentation.AODMutator;
 
 public final class Mutator {
 
@@ -101,6 +105,46 @@ public final class Mutator {
     add("CONDITIONALS_BOUNDARY",
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR);
 
+    /**
+     * Default mutator that replaces an arithmetic expression
+     * by each of the other ones.
+     */
+    add("ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR",
+        ArithmeticOperatorReplacementMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR);
+    
+            /**
+         * Set of AOD, AOR Mutators
+         */
+        add("AOD_FIRST", new AODMutator(AODMutator.MutantType.FIRST));
+        add("AOD_LAST", new AODMutator(AODMutator.MutantType.LAST));
+   /**
+     * Augmenting mutator that replaces relational operators.
+     */
+    add(
+        "ROR_IFEQ",
+        new RelationalOperatorReplacementMutator(
+            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFEQ));
+    add(
+        "ROR_IFGE",
+        new RelationalOperatorReplacementMutator(
+            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFGE));
+    add(
+        "ROR_IFGT",
+        new RelationalOperatorReplacementMutator(
+            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFGT));
+    add(
+        "ROR_IFLE",
+        new RelationalOperatorReplacementMutator(
+            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFLE));
+    add(
+        "ROR_IFLT",
+        new RelationalOperatorReplacementMutator(
+            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFLT));
+    add(
+        "ROR_IFNE",
+        new RelationalOperatorReplacementMutator(
+            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFNE));
+    addGroup("ROR", ror());
     /**
      * Default mutator that mutates increments, decrements and assignment
      * increments and decrements of local variables.
@@ -176,6 +220,9 @@ public final class Mutator {
     addGroup("STRONGER", stronger());
     addGroup("ALL", all());
     addGroup("NEW_DEFAULTS", newDefaults());
+     addGroup("AOD", aod());
+
+ 
   }
 
   public static Collection<MethodMutatorFactory> all() {
@@ -206,6 +253,7 @@ public final class Mutator {
         VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR,
         NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
+        ArithmeticOperatorReplacementMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR,
         IncrementsMutator.INCREMENTS_MUTATOR);
   }
 
@@ -218,9 +266,29 @@ public final class Mutator {
         VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR,
         NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
+        ArithmeticOperatorReplacementMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR,
         IncrementsMutator.INCREMENTS_MUTATOR), betterReturns());
   }
 
+   public static Collection<MethodMutatorFactory> aod() {
+        return group(new AODMutator(AODMutator.MutantType.FIRST), new AODMutator(AODMutator.MutantType.LAST));
+    }
+
+  public static Collection<MethodMutatorFactory> ror() {
+    return group(
+        new RelationalOperatorReplacementMutator(
+            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFEQ),
+        new RelationalOperatorReplacementMutator(
+            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFGE),
+        new RelationalOperatorReplacementMutator(
+            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFGT),
+        new RelationalOperatorReplacementMutator(
+            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFLE),
+        new RelationalOperatorReplacementMutator(
+            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFLT),
+        new RelationalOperatorReplacementMutator(
+            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFNE));
+  }
 
   public static Collection<MethodMutatorFactory> betterReturns() {
     return group(BooleanTrueReturnValsMutator.BOOLEAN_TRUE_RETURN,
@@ -271,5 +339,6 @@ public final class Mutator {
       return i;
     };
   }
-
+ 
 }
+  
