@@ -57,14 +57,11 @@ import org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiver
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveSwitchMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.augmentation.AODMutator;
-
-
 import org.pitest.mutationtest.engine.gregor.mutators.augmentation.CheckNullObjectMutator;
 
 public final class Mutator {
 
-  private static final Map<String, Iterable<MethodMutatorFactory>> MUTATORS = new LinkedHashMap<>();
+    private static final Map<String, Iterable<MethodMutatorFactory>> MUTATORS = new LinkedHashMap<>();
 
   static {
 
@@ -119,8 +116,7 @@ public final class Mutator {
             /**
          * Set of AOD, AOR Mutators
          */
-        add("AOD_FIRST", new AODMutator(AODMutator.MutantType.FIRST));
-        add("AOD_LAST", new AODMutator(AODMutator.MutantType.LAST));
+
    /**
      * Augmenting mutator that replaces relational operators.
      */
@@ -226,9 +222,7 @@ public final class Mutator {
     addGroup("NEW_DEFAULTS", newDefaults());
      addGroup("AOD", aod());
 
-<<<<<<< HEAD
- 
-=======
+
     /**
      * Augmenting mutator that replaces relational operators.
      */
@@ -270,127 +264,107 @@ public final class Mutator {
      * Add object null check mutation
      */
     add("NULL_CHECK", CheckNullObjectMutator.CHECK_NULL_OBJECT_MUTATOR);
->>>>>>> addNotNullMutator
+
   }
 
-  public static Collection<MethodMutatorFactory> all() {
-    return fromStrings(MUTATORS.keySet());
-  }
-
-  private static Collection<MethodMutatorFactory> stronger() {
-    return combine(
-        defaults(),
-        group(new RemoveConditionalMutator(Choice.EQUAL, false),
-            new SwitchMutator()));
-  }
-
-  private static Collection<MethodMutatorFactory> combine(
-      Collection<MethodMutatorFactory> a, Collection<MethodMutatorFactory> b) {
-    final List<MethodMutatorFactory> l = new ArrayList<>(a);
-    l.addAll(b);
-    return l;
-  }
-
-  /**
-   * Default set of mutators - designed to provide balance between strength and
-   * performance
-   */
-  public static Collection<MethodMutatorFactory> defaults() {
-    return group(InvertNegsMutator.INVERT_NEGS_MUTATOR,
-        ReturnValsMutator.RETURN_VALS_MUTATOR, MathMutator.MATH_MUTATOR,
-        VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR,
-        NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
-        ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
-        ArithmeticOperatorReplacementMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR,
-        IncrementsMutator.INCREMENTS_MUTATOR);
-  }
-
-  /**
-   * Proposed new defaults - replaced the RETURN_VALS mutator with the new more stable set
-   */
-  public static Collection<MethodMutatorFactory> newDefaults() {
-    return combine(group(InvertNegsMutator.INVERT_NEGS_MUTATOR,
-        MathMutator.MATH_MUTATOR,
-        VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR,
-        NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
-        ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
-        ArithmeticOperatorReplacementMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR,
-        IncrementsMutator.INCREMENTS_MUTATOR), betterReturns());
-  }
-
-   public static Collection<MethodMutatorFactory> aod() {
-        return group(new AODMutator(AODMutator.MutantType.FIRST), new AODMutator(AODMutator.MutantType.LAST));
+    public static Collection<MethodMutatorFactory> all() {
+        return fromStrings(MUTATORS.keySet());
     }
 
-  public static Collection<MethodMutatorFactory> ror() {
-    return group(
-        new RelationalOperatorReplacementMutator(
-            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFEQ),
-        new RelationalOperatorReplacementMutator(
-            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFGE),
-        new RelationalOperatorReplacementMutator(
-            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFGT),
-        new RelationalOperatorReplacementMutator(
-            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFLE),
-        new RelationalOperatorReplacementMutator(
-            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFLT),
-        new RelationalOperatorReplacementMutator(
-            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFNE));
-  }
+    private static Collection<MethodMutatorFactory> stronger() {
+        return combine(defaults(), group(new RemoveConditionalMutator(Choice.EQUAL, false), new SwitchMutator()));
+    }
 
-  public static Collection<MethodMutatorFactory> betterReturns() {
-    return group(BooleanTrueReturnValsMutator.BOOLEAN_TRUE_RETURN,
-        BooleanFalseReturnValsMutator.BOOLEAN_FALSE_RETURN,
-        PrimitiveReturnsMutator.PRIMITIVE_RETURN_VALS_MUTATOR,
-        EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES,
-        NullReturnValsMutator.NULL_RETURN_VALUES);
-  }
+    private static Collection<MethodMutatorFactory> combine(Collection<MethodMutatorFactory> a,
+            Collection<MethodMutatorFactory> b) {
+        final List<MethodMutatorFactory> l = new ArrayList<>(a);
+        l.addAll(b);
+        return l;
+    }
 
-  private static Collection<MethodMutatorFactory> group(
-      final MethodMutatorFactory... ms) {
-    return Arrays.asList(ms);
-  }
+    /**
+     * Default set of mutators - designed to provide balance between strength and
+     * performance
+     */
+    public static Collection<MethodMutatorFactory> defaults() {
+        return group(InvertNegsMutator.INVERT_NEGS_MUTATOR, ReturnValsMutator.RETURN_VALS_MUTATOR,
+                MathMutator.MATH_MUTATOR, VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR,
+                NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
+                ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
+                ArithmeticOperatorReplacementMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR,
+                IncrementsMutator.INCREMENTS_MUTATOR);
+    }
 
-  public static Collection<MethodMutatorFactory> byName(final String name) {
-    return FCollection.map(MUTATORS.get(name),
-        Prelude.id(MethodMutatorFactory.class));
-  }
+    /**
+     * Proposed new defaults - replaced the RETURN_VALS mutator with the new more
+     * stable set
+     */
+    public static Collection<MethodMutatorFactory> newDefaults() {
+        return combine(group(InvertNegsMutator.INVERT_NEGS_MUTATOR, MathMutator.MATH_MUTATOR,
+                VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR, NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
+                ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
+                ArithmeticOperatorReplacementMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR,
+                IncrementsMutator.INCREMENTS_MUTATOR), betterReturns());
+    }
 
-  private static void add(final String key, final MethodMutatorFactory value) {
-    MUTATORS.put(key, Collections.singleton(value));
-  }
+    public static Collection<MethodMutatorFactory> ror() {
+        return group(
+                new RelationalOperatorReplacementMutator(RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFEQ),
+                new RelationalOperatorReplacementMutator(RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFGE),
+                new RelationalOperatorReplacementMutator(RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFGT),
+                new RelationalOperatorReplacementMutator(RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFLE),
+                new RelationalOperatorReplacementMutator(RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFLT),
+                new RelationalOperatorReplacementMutator(
+                        RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFNE));
+    }
 
-  private static void addGroup(final String key,
-      final Iterable<MethodMutatorFactory> value) {
-    MUTATORS.put(key, value);
-  }
+    public static Collection<MethodMutatorFactory> betterReturns() {
+        return group(BooleanTrueReturnValsMutator.BOOLEAN_TRUE_RETURN,
+                BooleanFalseReturnValsMutator.BOOLEAN_FALSE_RETURN,
+                PrimitiveReturnsMutator.PRIMITIVE_RETURN_VALS_MUTATOR, EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES,
+                NullReturnValsMutator.NULL_RETURN_VALUES);
+    }
 
-  public static Collection<MethodMutatorFactory> fromStrings(
-      final Collection<String> names) {
-    final Set<MethodMutatorFactory> unique = new TreeSet<>(
-        compareId());
+    private static Collection<MethodMutatorFactory> group(final MethodMutatorFactory... ms) {
+        return Arrays.asList(ms);
+    }
 
-    FCollection.flatMapTo(names, fromString(), unique);
-    return unique;
-  }
+    public static Collection<MethodMutatorFactory> byName(final String name) {
+        return FCollection.map(MUTATORS.get(name), Prelude.id(MethodMutatorFactory.class));
+    }
 
-  public static Collection<MethodMutatorFactory> aod() {
-    return group(new ArithmeticOperandDeletion(ArithmeticOperandDeletion.MutantType.REMOVE_FIRST_MUTATOR), new ArithmeticOperandDeletion(ArithmeticOperandDeletion.MutantType.REMOVE_LAST_MUTATOR));
-  }
+    private static void add(final String key, final MethodMutatorFactory value) {
+        MUTATORS.put(key, Collections.singleton(value));
+    }
 
-  private static Comparator<? super MethodMutatorFactory> compareId() {
-    return (o1, o2) -> o1.getGloballyUniqueId().compareTo(o2.getGloballyUniqueId());
-  }
+    private static void addGroup(final String key, final Iterable<MethodMutatorFactory> value) {
+        MUTATORS.put(key, value);
+    }
 
-  private static Function<String, Iterable<MethodMutatorFactory>> fromString() {
-    return a -> {
-      final Iterable<MethodMutatorFactory> i = MUTATORS.get(a);
-      if (i == null) {
-        throw new PitHelpError(Help.UNKNOWN_MUTATOR, a);
-      }
-      return i;
-    };
-  }
- 
+    public static Collection<MethodMutatorFactory> fromStrings(final Collection<String> names) {
+        final Set<MethodMutatorFactory> unique = new TreeSet<>(compareId());
+
+        FCollection.flatMapTo(names, fromString(), unique);
+        return unique;
+    }
+
+    public static Collection<MethodMutatorFactory> aod() {
+        return group(new ArithmeticOperandDeletion(ArithmeticOperandDeletion.MutantType.REMOVE_FIRST_MUTATOR),
+                new ArithmeticOperandDeletion(ArithmeticOperandDeletion.MutantType.REMOVE_LAST_MUTATOR));
+    }
+
+    private static Comparator<? super MethodMutatorFactory> compareId() {
+        return (o1, o2) -> o1.getGloballyUniqueId().compareTo(o2.getGloballyUniqueId());
+    }
+
+    private static Function<String, Iterable<MethodMutatorFactory>> fromString() {
+        return a -> {
+            final Iterable<MethodMutatorFactory> i = MUTATORS.get(a);
+            if (i == null) {
+                throw new PitHelpError(Help.UNKNOWN_MUTATOR, a);
+            }
+            return i;
+        };
+    }
+
 }
-  
