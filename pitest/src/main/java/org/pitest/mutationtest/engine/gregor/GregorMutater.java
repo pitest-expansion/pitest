@@ -148,4 +148,7 @@ public class GregorMutater implements Mutater {
         return a -> a.isGeneratedEnumMethod();
     }
 
+    public ClassByteArraySource getByteSource() {
+        return this.byteSource;
+    }
 }
