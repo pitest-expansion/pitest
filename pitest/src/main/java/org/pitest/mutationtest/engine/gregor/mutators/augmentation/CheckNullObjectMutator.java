@@ -9,7 +9,7 @@ import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
-import org.pitest.mutationtest.engine.gregor.InsnSubstitution;
+//import org.pitest.mutationtest.engine.gregor.InsnSubstitution;
 
 /* M1 mutation, check for null before dereferencing.
  * 
@@ -74,7 +74,7 @@ class CheckNullObjectVisitor extends MethodVisitor {
             final MutationIdentifier muID = this.context.registerMutation(factory, "Checked for NULL object here.");
 
             if (this.context.shouldMutate(muID)) {
-                addIfNullCondition(opcode, owner, name, desc);
+                createIfNullMutation(opcode, owner, name, desc);
                 // addAssertNullMethod();
 
             }
@@ -83,7 +83,7 @@ class CheckNullObjectVisitor extends MethodVisitor {
         }
     }
 
-    /*
+    /**
      * Use JUnit assertNotNull to check object/item for null. This will throw an
      * error
      */
@@ -94,12 +94,12 @@ class CheckNullObjectVisitor extends MethodVisitor {
         // super.visitEnd();
     }
 
-    /*
-     * Use IFNONNULL to check for null object before dereferencing.
+    /**
+     * Use IFNULL to check for null object before dereferencing.
      */
-    private void addIfNullCondition(int opcode, String owner, String name, String desc) {
+    private void createIfNullMutation(int opcode, String owner, String name, String desc) {
 
-        // create a label to mark where IFNONNULL jump to
+        // create a label to mark where IFNULL jump to
         Label ifNotNull = new Label();
         Label ifNull = new Label();
         Label returnToNormalCode = new Label();
@@ -115,7 +115,7 @@ class CheckNullObjectVisitor extends MethodVisitor {
         
         // set the location so IFNULL skip dereferencing and go here. POP the object reference because we don't need it on the stack
         super.visitLabel(ifNull);
-        super.visitInsn(Opcodes.POP);
+        //super.visitInsn(Opcodes.POP);
         super.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
         super.visitLdcInsn("Object is null, skip dereferencing.");
         super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream", "<init>", "(Ljava/lang/String;)V", false);
@@ -124,16 +124,16 @@ class CheckNullObjectVisitor extends MethodVisitor {
         super.visitLabel(returnToNormalCode);
     }
 
-    /*
+    /**
      * We don't introduce any new variable, just one computation, so the maxStack
-     * should increase by 1. In FrameOptions.java, the ClassWriter already has
+     * should not change. In FrameOptions.java, the ClassWriter already has
      * COMPUTE_FRAME so maybe this stack size will be automatically calculated.
      * 
      * @see org.objectweb.asm.MethodVisitor#visitMaxs(int, int)
      */
     @Override
     public void visitMaxs(int maxStack, int maxLocals) {
-        super.visitMaxs(maxStack + 1, maxLocals);
+        super.visitMaxs(maxStack, maxLocals);
     }
 
 }

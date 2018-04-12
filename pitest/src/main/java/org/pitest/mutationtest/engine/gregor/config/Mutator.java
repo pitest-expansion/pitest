@@ -63,209 +63,175 @@ public final class Mutator {
 
     private static final Map<String, Iterable<MethodMutatorFactory>> MUTATORS = new LinkedHashMap<>();
 
-  static {
+    static {
 
-    /**
-     * Default mutator that inverts the negation of integer and floating point
-     * numbers.
-     */
-    add("INVERT_NEGS", InvertNegsMutator.INVERT_NEGS_MUTATOR);
+        /**
+         * Default mutator that inverts the negation of integer and floating point
+         * numbers.
+         */
+        add("INVERT_NEGS", InvertNegsMutator.INVERT_NEGS_MUTATOR);
 
-    /**
-     * Default mutator that mutates the return values of methods.
-     */
-    add("RETURN_VALS", ReturnValsMutator.RETURN_VALS_MUTATOR);
+        /**
+         * Default mutator that mutates the return values of methods.
+         */
+        add("RETURN_VALS", ReturnValsMutator.RETURN_VALS_MUTATOR);
 
-    /**
-     * Optional mutator that mutates integer and floating point inline
-     * constants.
-     */
-    add("INLINE_CONSTS", new InlineConstantMutator());
+        /**
+         * Optional mutator that mutates integer and floating point inline constants.
+         */
+        add("INLINE_CONSTS", new InlineConstantMutator());
 
-    /**
-     * Default mutator that mutates binary arithmetic operations.
-     */
-    add("MATH", MathMutator.MATH_MUTATOR);
+        /**
+         * Default mutator that mutates binary arithmetic operations.
+         */
+        add("MATH", MathMutator.MATH_MUTATOR);
 
-    /**
-     * Default mutator that removes method calls to void methods.
-     *
-     */
-    add("VOID_METHOD_CALLS", VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR);
+        /**
+         * Default mutator that removes method calls to void methods.
+         *
+         */
+        add("VOID_METHOD_CALLS", VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR);
 
-    /**
-     * Default mutator that negates conditionals.
-     */
-    add("NEGATE_CONDITIONALS",
-        NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR);
+        /**
+         * Default mutator that negates conditionals.
+         */
+        add("NEGATE_CONDITIONALS", NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR);
 
-    /**
-     * Default mutator that replaces the relational operators with their
-     * boundary counterpart.
-     */
-    add("CONDITIONALS_BOUNDARY",
-        ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR);
+        /**
+         * Default mutator that replaces the relational operators with their boundary
+         * counterpart.
+         */
+        add("CONDITIONALS_BOUNDARY", ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR);
 
-    /**
-     * Default mutator that replaces an arithmetic expression
-     * by each of the other ones.
-     */
-    add("ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR",
-        ArithmeticOperatorReplacementMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR);
-    
-            /**
+        /**
+         * Default mutator that replaces an arithmetic expression by each of the other
+         * ones.
+         */
+        add("ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR",
+                ArithmeticOperatorReplacementMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR);
+
+        /**
          * Set of AOD, AOR Mutators
          */
 
-   /**
-     * Augmenting mutator that replaces relational operators.
-     */
-    add(
-        "ROR_IFEQ",
-        new RelationalOperatorReplacementMutator(
-            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFEQ));
-    add(
-        "ROR_IFGE",
-        new RelationalOperatorReplacementMutator(
-            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFGE));
-    add(
-        "ROR_IFGT",
-        new RelationalOperatorReplacementMutator(
-            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFGT));
-    add(
-        "ROR_IFLE",
-        new RelationalOperatorReplacementMutator(
-            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFLE));
-    add(
-        "ROR_IFLT",
-        new RelationalOperatorReplacementMutator(
-            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFLT));
-    add(
-        "ROR_IFNE",
-        new RelationalOperatorReplacementMutator(
-            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFNE));
-    addGroup("ROR", ror());
-    /**
-     * Default mutator that mutates increments, decrements and assignment
-     * increments and decrements of local variables.
-     */
-    add("INCREMENTS", IncrementsMutator.INCREMENTS_MUTATOR);
+        /**
+         * Augmenting mutator that replaces relational operators.
+         */
+        add("ROR_IFEQ", new RelationalOperatorReplacementMutator(
+                RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFEQ));
+        add("ROR_IFGE", new RelationalOperatorReplacementMutator(
+                RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFGE));
+        add("ROR_IFGT", new RelationalOperatorReplacementMutator(
+                RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFGT));
+        add("ROR_IFLE", new RelationalOperatorReplacementMutator(
+                RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFLE));
+        add("ROR_IFLT", new RelationalOperatorReplacementMutator(
+                RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFLT));
+        add("ROR_IFNE", new RelationalOperatorReplacementMutator(
+                RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFNE));
+        addGroup("ROR", ror());
+        /**
+         * Default mutator that mutates increments, decrements and assignment increments
+         * and decrements of local variables.
+         */
+        add("INCREMENTS", IncrementsMutator.INCREMENTS_MUTATOR);
 
-    /**
-     * Optional mutator that removes local variable increments.
-     */
+        /**
+         * Optional mutator that removes local variable increments.
+         */
 
-    add("REMOVE_INCREMENTS", RemoveIncrementsMutator.REMOVE_INCREMENTS_MUTATOR);
+        add("REMOVE_INCREMENTS", RemoveIncrementsMutator.REMOVE_INCREMENTS_MUTATOR);
 
-    /**
-     * Optional mutator that removes method calls to non void methods.
-     */
-    add("NON_VOID_METHOD_CALLS",
-        NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
+        /**
+         * Optional mutator that removes method calls to non void methods.
+         */
+        add("NON_VOID_METHOD_CALLS", NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
 
-    /**
-     * Optional mutator that replaces constructor calls with null values.
-     */
-    add("CONSTRUCTOR_CALLS", ConstructorCallMutator.CONSTRUCTOR_CALL_MUTATOR);
+        /**
+         * Optional mutator that replaces constructor calls with null values.
+         */
+        add("CONSTRUCTOR_CALLS", ConstructorCallMutator.CONSTRUCTOR_CALL_MUTATOR);
 
-    /**
-     * Removes conditional statements so that guarded statements always execute
-     * The EQUAL version ignores LT,LE,GT,GE, which is the default behaviour,
-     * ORDER version mutates only those.
-     */
+        /**
+         * Removes conditional statements so that guarded statements always execute The
+         * EQUAL version ignores LT,LE,GT,GE, which is the default behaviour, ORDER
+         * version mutates only those.
+         */
 
-    add("REMOVE_CONDITIONALS_EQ_IF", new RemoveConditionalMutator(Choice.EQUAL,
-        true));
-    add("REMOVE_CONDITIONALS_EQ_ELSE", new RemoveConditionalMutator(
-        Choice.EQUAL, false));
-    add("REMOVE_CONDITIONALS_ORD_IF", new RemoveConditionalMutator(
-        Choice.ORDER, true));
-    add("REMOVE_CONDITIONALS_ORD_ELSE", new RemoveConditionalMutator(
-        Choice.ORDER, false));
-    addGroup("REMOVE_CONDITIONALS", RemoveConditionalMutator.makeMutators());
+        add("REMOVE_CONDITIONALS_EQ_IF", new RemoveConditionalMutator(Choice.EQUAL, true));
+        add("REMOVE_CONDITIONALS_EQ_ELSE", new RemoveConditionalMutator(Choice.EQUAL, false));
+        add("REMOVE_CONDITIONALS_ORD_IF", new RemoveConditionalMutator(Choice.ORDER, true));
+        add("REMOVE_CONDITIONALS_ORD_ELSE", new RemoveConditionalMutator(Choice.ORDER, false));
+        addGroup("REMOVE_CONDITIONALS", RemoveConditionalMutator.makeMutators());
 
-    add("TRUE_RETURNS", BooleanTrueReturnValsMutator.BOOLEAN_TRUE_RETURN);
-    add("FALSE_RETURNS", BooleanFalseReturnValsMutator.BOOLEAN_FALSE_RETURN);
-    add("PRIMITIVE_RETURNS", PrimitiveReturnsMutator.PRIMITIVE_RETURN_VALS_MUTATOR);
-    add("EMPTY_RETURNS", EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES);
-    add("NULL_RETURNS", NullReturnValsMutator.NULL_RETURN_VALUES);
-    addGroup("RETURNS", betterReturns());
+        add("TRUE_RETURNS", BooleanTrueReturnValsMutator.BOOLEAN_TRUE_RETURN);
+        add("FALSE_RETURNS", BooleanFalseReturnValsMutator.BOOLEAN_FALSE_RETURN);
+        add("PRIMITIVE_RETURNS", PrimitiveReturnsMutator.PRIMITIVE_RETURN_VALS_MUTATOR);
+        add("EMPTY_RETURNS", EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES);
+        add("NULL_RETURNS", NullReturnValsMutator.NULL_RETURN_VALUES);
+        addGroup("RETURNS", betterReturns());
 
-    /**
-     * Experimental mutator that removed assignments to member variables.
-     */
-    add("EXPERIMENTAL_MEMBER_VARIABLE",
-        new org.pitest.mutationtest.engine.gregor.mutators.experimental.MemberVariableMutator());
+        /**
+         * Experimental mutator that removed assignments to member variables.
+         */
+        add("EXPERIMENTAL_MEMBER_VARIABLE",
+                new org.pitest.mutationtest.engine.gregor.mutators.experimental.MemberVariableMutator());
 
-    /**
-     * Experimental mutator that swaps labels in switch statements
-     */
-    add("EXPERIMENTAL_SWITCH",
-        new org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator());
+        /**
+         * Experimental mutator that swaps labels in switch statements
+         */
+        add("EXPERIMENTAL_SWITCH", new org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator());
 
-    /**
-     * Experimental mutator that replaces method call with one of its parameters
-     * of matching type
-     */
-    add("EXPERIMENTAL_ARGUMENT_PROPAGATION",
-        ArgumentPropagationMutator.ARGUMENT_PROPAGATION_MUTATOR);
+        /**
+         * Experimental mutator that replaces method call with one of its parameters of
+         * matching type
+         */
+        add("EXPERIMENTAL_ARGUMENT_PROPAGATION", ArgumentPropagationMutator.ARGUMENT_PROPAGATION_MUTATOR);
 
-    /**
-     * Experimental mutator that replaces method call with this
-     */
-    add("EXPERIMENTAL_NAKED_RECEIVER", NakedReceiverMutator.NAKED_RECEIVER);
+        /**
+         * Experimental mutator that replaces method call with this
+         */
+        add("EXPERIMENTAL_NAKED_RECEIVER", NakedReceiverMutator.NAKED_RECEIVER);
 
-    addGroup("REMOVE_SWITCH", RemoveSwitchMutator.makeMutators());
-    addGroup("DEFAULTS", defaults());
-    addGroup("STRONGER", stronger());
-    addGroup("ALL", all());
-    addGroup("NEW_DEFAULTS", newDefaults());
-     addGroup("AOD", aod());
+        addGroup("REMOVE_SWITCH", RemoveSwitchMutator.makeMutators());
+        addGroup("DEFAULTS", defaults());
+        addGroup("STRONGER", stronger());
+        addGroup("ALL", all());
+        addGroup("NEW_DEFAULTS", newDefaults());
 
+        /**
+         * Augmenting mutator that replaces relational operators.
+         */
+        add("ROR_IFEQ", new RelationalOperatorReplacementMutator(
+                RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFEQ));
+        add("ROR_IFGE", new RelationalOperatorReplacementMutator(
+                RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFGE));
+        add("ROR_IFGT", new RelationalOperatorReplacementMutator(
+                RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFGT));
+        add("ROR_IFLE", new RelationalOperatorReplacementMutator(
+                RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFLE));
+        add("ROR_IFLT", new RelationalOperatorReplacementMutator(
+                RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFLT));
+        add("ROR_IFNE", new RelationalOperatorReplacementMutator(
+                RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFNE));
+        addGroup("ROR", ror());
 
-    /**
-     * Augmenting mutator that replaces relational operators.
-     */
-    add(
-        "ROR_IFEQ",
-        new RelationalOperatorReplacementMutator(
-            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFEQ));
-    add(
-        "ROR_IFGE",
-        new RelationalOperatorReplacementMutator(
-            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFGE));
-    add(
-        "ROR_IFGT",
-        new RelationalOperatorReplacementMutator(
-            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFGT));
-    add(
-        "ROR_IFLE",
-        new RelationalOperatorReplacementMutator(
-            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFLE));
-    add(
-        "ROR_IFLT",
-        new RelationalOperatorReplacementMutator(
-            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFLT));
-    add(
-        "ROR_IFNE",
-        new RelationalOperatorReplacementMutator(
-            RelationalOperatorReplacementMutator.OpcodeCompareToZero.IFNE));
-    addGroup("ROR", ror());
+        /**
+         * Augmenting mutator that replaces binary arithmetic operations with their
+         * individual arguments.
+         */
+        add("REMOVE_FIRST_MUTATOR",
+                new ArithmeticOperandDeletion(ArithmeticOperandDeletion.MutantType.REMOVE_FIRST_MUTATOR));
+        add("REMOVE_LAST_MUTATOR",
+                new ArithmeticOperandDeletion(ArithmeticOperandDeletion.MutantType.REMOVE_LAST_MUTATOR));
+        addGroup("AOD", aod());
 
-    /**
-     * Augmenting mutator that replaces binary arithmetic operations
-     * with their individual arguments.
-     */
-    add("REMOVE_FIRST_MUTATOR", new ArithmeticOperandDeletion(ArithmeticOperandDeletion.MutantType.REMOVE_FIRST_MUTATOR));
-    add("REMOVE_LAST_MUTATOR", new ArithmeticOperandDeletion(ArithmeticOperandDeletion.MutantType.REMOVE_LAST_MUTATOR));
-    addGroup("AOD", aod());
-    
-    /*
-     * Add object null check mutation
-     */
-    add("NULL_CHECK", CheckNullObjectMutator.CHECK_NULL_OBJECT_MUTATOR);
+        /*
+         * Add object null check mutation
+         */
+        add("NULL_CHECK", CheckNullObjectMutator.CHECK_NULL_OBJECT_MUTATOR);
 
-  }
+    }
 
     public static Collection<MethodMutatorFactory> all() {
         return fromStrings(MUTATORS.keySet());
