@@ -16,6 +16,7 @@
 package org.pitest.mutationtest.engine.gregor;
 
 import org.objectweb.asm.MethodVisitor;
+import org.pitest.classinfo.ClassByteArraySource;
 
 /**
  * A <code>MethodMutatorFactory</code> is a factory creating method mutating
@@ -38,7 +39,15 @@ import org.objectweb.asm.MethodVisitor;
  */
 public interface MethodMutatorFactory {
 
-    MethodVisitor create(MutationContext context, MethodInfo methodInfo, MethodVisitor methodVisitor);
+    /**
+     * To be implemented in various mutators in their own package. Visit a method and create mutations. 
+     * @param context
+     * @param methodInfo
+     * @param methodVisitor
+     * @param byteSource
+     * @return
+     */
+    MethodVisitor create(MutationContext context, MethodInfo methodInfo, MethodVisitor methodVisitor, ClassByteArraySource byteSource);
 
     /**
      * To be implemented in various mutators in their own packages, usually in the

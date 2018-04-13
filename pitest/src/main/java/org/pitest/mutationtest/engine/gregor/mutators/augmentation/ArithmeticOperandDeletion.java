@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.AbstractInsnMutator;
 import org.pitest.mutationtest.engine.gregor.InsnSubstitution;
@@ -50,7 +51,7 @@ public class ArithmeticOperandDeletion implements MethodMutatorFactory {
 
     @Override
     public MethodVisitor create(final MutationContext context, final MethodInfo methodInfo,
-            final MethodVisitor methodVisitor) {
+            final MethodVisitor methodVisitor, ClassByteArraySource byteSource) {
         if (this.mutatorType == ArithmeticOperandDeletion.MutantType.REMOVE_FIRST_MUTATOR) {
             return new AODFirstMethodVisitor(this, methodInfo, context, methodVisitor);
         } else if (this.mutatorType == ArithmeticOperandDeletion.MutantType.REMOVE_LAST_MUTATOR) {

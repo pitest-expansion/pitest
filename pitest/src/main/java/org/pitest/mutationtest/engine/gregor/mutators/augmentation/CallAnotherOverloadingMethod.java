@@ -1,9 +1,12 @@
 
 package org.pitest.mutationtest.engine.gregor.mutators.augmentation;
 
+import java.util.Optional;
+
 import org.objectweb.asm.MethodVisitor;
 //import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 //import org.pitest.mutationtest.engine.MutationIdentifier;
 //import org.pitest.mutationtest.engine.gregor.AbstractInsnMutator;
@@ -21,8 +24,11 @@ public enum CallAnotherOverloadingMethod implements MethodMutatorFactory {
     REPLACE_WITH_OVERLOADING_METHOD;
 
     @Override
-    public MethodVisitor create(MutationContext context, MethodInfo methodInfo, MethodVisitor methodVisitor) {
-        return new ReplaceWithOverloadingMethod(this, context, methodVisitor);
+    public MethodVisitor create(MutationContext context, MethodInfo methodInfo, MethodVisitor methodVisitor,
+            ClassByteArraySource byteSource) {
+        ReplaceWithOverloadingMethod mv = new ReplaceWithOverloadingMethod(this, context, methodVisitor);
+        mv.setByteSource(byteSource);
+        return mv;
     }
 
     @Override
@@ -55,12 +61,29 @@ public enum CallAnotherOverloadingMethod implements MethodMutatorFactory {
 class ReplaceWithOverloadingMethod extends MethodVisitor {
     private final MethodMutatorFactory factory;
     private final MutationContext context;
+    private ClassByteArraySource byteSource;
 
     ReplaceWithOverloadingMethod(final MethodMutatorFactory factory, final MutationContext context,
             final MethodVisitor mv) {
         super(Opcodes.ASM6, mv);
         this.factory = factory;
         this.context = context;
+    }
+
+    /**
+     * Should return an optional object to analyze the byte source. This bytesource can only be extracted with a class name.
+     * @param clazz A string to help extract data from bytesource.
+     * @return
+     */
+    private  Optional<byte[]> getBytes(String clazz){
+        return Optional;
+    }
+    public ClassByteArraySource getByteSource() {
+        return this.byteSource;
+    }
+
+    public void setByteSource(ClassByteArraySource byteSource) {
+        this.byteSource = byteSource;
     }
 
     /**
@@ -85,52 +108,23 @@ class ReplaceWithOverloadingMethod extends MethodVisitor {
     /**
      * Get class info
      */
-     
-    
-    /**
-     * Somehow get bytesource from the current class and extract all overloading
-     * methods of the current method.
-     * 
-     * @param owner
-     *            TODO
-     * @param name
-     *            TODO
-     * @param desc
-     *            TODO
-     * @param itf
-     *            TODO
-     */
+
+/**
+ * This method actually replace the method descriptor and method signature
+ * @param opcode The opcode to write into bytecode.
+ * @param owner Fully qualified package name.
+ * @param name Fully qualified method name
+ * @param desc Method description
+ * @param itf method access flag. Usually 0??? Not sure.
+ */
     private void replaceMethodDescriptorMutation(int opcode, String owner, String name, String desc, boolean itf) {
-        
+
         // I should use bytesource from GregorEngineFactory.java
         // -> GregorMutationEngine.java -> GregorMutater.java
 
         /*
          * 
-         * MethodMutatorFactor factory, MutationContext context, MethodInfo methodInfo,
-         * MethodVisitor methodVisitor 
-         * 
-         * ByteSource is an interface and therefore can
-         * accept CachingByteArraySource, ClassloaderByteArraySource,
-         * ClassPathByteArraySource, ResourceFolderByteArraySource.
-         * 
-         * The problem: Bytesource doesn't take any argument I can get with
-         * MethodMutatorFactory and MethodVisitor
-         * 
-         * I can extend method visitor, then extend GregorMutater or anything that
-         * contains bytesource, then do a hashmap to save the method descriptors, and
-         * replace it with the methods. Maybe use a dictionary.
-         * 
-         * 
-         * 
-         * The rest is similar to doing ROR, but use a different method to rewrite
-         * INVOKE bytecode.
-         * 
-         * I think I need to extend MethodMutatorFactory and MethodVisitor, then use
-         * information from there to use GregorMutater.
-         * 
-         * MethodMutatorFactory gets MutationContext, which has getClassInfo(), returns
-         * classInfo
+I changed the method signature to include Class
          */
 
     }

@@ -3,6 +3,7 @@ package org.pitest.mutationtest.engine.gregor.mutators.augmentation;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 //import org.pitest.mutationtest.engine.gregor.AbstractInsnMutator;
 //import org.pitest.mutationtest.engine.gregor.InsnSubstitution;
@@ -32,7 +33,7 @@ public enum CheckNullObjectMutator implements MethodMutatorFactory {
      * org.objectweb.asm.MethodVisitor)
      */
     @Override
-    public MethodVisitor create(final MutationContext context, final MethodInfo methodInfo, final MethodVisitor mv) {
+    public MethodVisitor create(final MutationContext context, final MethodInfo methodInfo, final MethodVisitor mv, ClassByteArraySource byteSource) {
         return new ArithmeticOperatorReplacementMethodVisitor(this, methodInfo, context, mv);
     }
 

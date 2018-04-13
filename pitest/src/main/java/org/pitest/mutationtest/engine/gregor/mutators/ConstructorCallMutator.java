@@ -18,6 +18,7 @@ package org.pitest.mutationtest.engine.gregor.mutators;
 import java.util.function.BiFunction;
 
 import org.objectweb.asm.MethodVisitor;
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
@@ -34,7 +35,7 @@ public enum ConstructorCallMutator implements MethodMutatorFactory {
 
     @Override
     public MethodVisitor create(final MutationContext context, final MethodInfo methodInfo,
-            final MethodVisitor methodVisitor) {
+            final MethodVisitor methodVisitor, ClassByteArraySource byteSource) {
         return new MethodCallMethodVisitor(methodInfo, context, methodVisitor, this, constructors());
     }
 

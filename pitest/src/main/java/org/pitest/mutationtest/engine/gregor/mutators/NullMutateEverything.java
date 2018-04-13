@@ -7,6 +7,7 @@ import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
@@ -22,7 +23,7 @@ public class NullMutateEverything implements MethodMutatorFactory {
 
   @Override
   public MethodVisitor create(MutationContext context, MethodInfo methodInfo,
-      MethodVisitor methodVisitor) {
+      MethodVisitor methodVisitor, ClassByteArraySource byteSource) {
     return new MutateEveryThing(this, context, methodVisitor);
   }
 

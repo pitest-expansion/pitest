@@ -18,6 +18,7 @@ package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
@@ -81,7 +82,7 @@ public class MemberVariableMutator implements MethodMutatorFactory {
 
     @Override
     public MethodVisitor create(final MutationContext context, final MethodInfo methodInfo,
-            final MethodVisitor methodVisitor) {
+            final MethodVisitor methodVisitor, ClassByteArraySource byteSource) {
         return new MemberVariableVisitor(context, methodVisitor);
     }
 

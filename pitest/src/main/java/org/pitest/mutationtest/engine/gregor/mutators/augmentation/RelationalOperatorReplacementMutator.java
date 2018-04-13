@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.mutationtest.engine.gregor.AbstractJumpMutator;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
@@ -135,7 +136,7 @@ public class RelationalOperatorReplacementMutator implements MethodMutatorFactor
   public MethodVisitor create(
       final MutationContext context,
       final MethodInfo methodInfo,
-      final MethodVisitor methodVisitor) {
+      final MethodVisitor methodVisitor, ClassByteArraySource byteSource) {
     switch (this.operator) {
     case IFEQ:
       return new RelationalOperatorReplacementIFEQMethodVisitor(
