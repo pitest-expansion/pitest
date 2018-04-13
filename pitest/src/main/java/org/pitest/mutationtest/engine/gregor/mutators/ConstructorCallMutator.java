@@ -22,29 +22,34 @@ import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
 
+/**
+ * Replaces constructor calls with null. Uses MethodCallMethodVisitor to
+ * identify constructor call.
+ *
+ * 
+ */
 public enum ConstructorCallMutator implements MethodMutatorFactory {
 
-  CONSTRUCTOR_CALL_MUTATOR;
+    CONSTRUCTOR_CALL_MUTATOR;
 
-  @Override
-  public MethodVisitor create(final MutationContext context,
-      final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    return new MethodCallMethodVisitor(methodInfo, context, methodVisitor,
-        this, constructors());
-  }
+    @Override
+    public MethodVisitor create(final MutationContext context, final MethodInfo methodInfo,
+            final MethodVisitor methodVisitor) {
+        return new MethodCallMethodVisitor(methodInfo, context, methodVisitor, this, constructors());
+    }
 
-  @Override
-  public String getGloballyUniqueId() {
-    return this.getClass().getName();
-  }
+    @Override
+    public String getGloballyUniqueId() {
+        return this.getClass().getName();
+    }
 
-  private static BiFunction<String, String, Boolean> constructors() {
-    return (name, desc) -> MethodInfo.isConstructor(name);
-  }
+    private static BiFunction<String, String, Boolean> constructors() {
+        return (name, desc) -> MethodInfo.isConstructor(name);
+    }
 
-  @Override
-  public String getName() {
-    return name();
-  }
+    @Override
+    public String getName() {
+        return name();
+    }
 
 }

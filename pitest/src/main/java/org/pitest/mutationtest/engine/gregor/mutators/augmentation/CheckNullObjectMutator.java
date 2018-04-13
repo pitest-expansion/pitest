@@ -115,11 +115,11 @@ class CheckNullObjectVisitor extends MethodVisitor {
         
         // set the location so IFNULL skip dereferencing and go here. POP the object reference because we don't need it on the stack
         super.visitLabel(ifNull);
-        //super.visitInsn(Opcodes.POP);
+        super.visitInsn(Opcodes.POP);
         super.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
         super.visitLdcInsn("Object is null, skip dereferencing.");
         super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream", "<init>", "(Ljava/lang/String;)V", false);
-    
+        super.visitJumpInsn(Opcodes.GOTO, returnToNormalCode);
         //set the location to exit the modified section.
         super.visitLabel(returnToNormalCode);
     }

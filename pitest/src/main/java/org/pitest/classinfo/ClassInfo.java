@@ -26,146 +26,149 @@ import org.objectweb.asm.Opcodes;
 import org.pitest.functional.FCollection;
 import java.util.Optional;
 
+/**
+ * Create a ClasInfo object from superClass, outerClass and a ClassInfoBuilder
+ * This is not the same as ClassInfo.java in package engine.gregor.
+ * 
+ */
 public class ClassInfo {
 
-  private final ClassIdentifier        id;
+    private final ClassIdentifier id;
 
-  private final int                    access;
-  private final Set<Integer>           codeLines;
-  private final ClassPointer           outerClass;
-  private final ClassPointer           superClass;
-  private final Collection<ClassName>  annotations;
-  private final String                 sourceFile;
-  private final Map<ClassName, Object> classAnnotationValues;
+    private final int access;
+    private final Set<Integer> codeLines;
+    private final ClassPointer outerClass;
+    private final ClassPointer superClass;
+    private final Collection<ClassName> annotations;
+    private final String sourceFile;
+    private final Map<ClassName, Object> classAnnotationValues;
 
-  public ClassInfo(final ClassPointer superClass,
-      final ClassPointer outerClass, final ClassInfoBuilder builder) {
-    this.superClass = superClass;
-    this.outerClass = outerClass;
-    this.id = builder.id;
-    this.access = builder.access;
-    this.codeLines = builder.codeLines;
-    this.annotations = FCollection.map(builder.annotations,
-        ClassName.stringToClassName());
-    this.sourceFile = builder.sourceFile;
-    this.classAnnotationValues = builder.classAnnotationValues;
-  }
-
-  public int getNumberOfCodeLines() {
-    return this.codeLines.size();
-  }
-
-  public boolean isCodeLine(final int line) {
-    return this.codeLines.contains(line);
-  }
-
-  public ClassIdentifier getId() {
-    return this.id;
-  }
-
-  public ClassName getName() {
-    return this.id.getName();
-  }
-
-  public boolean isInterface() {
-    return (this.access & Opcodes.ACC_INTERFACE) != 0;
-  }
-
-  public boolean isAbstract() {
-    return (this.access & Opcodes.ACC_ABSTRACT) != 0;
-  }
-
-  public boolean isSynthetic() {
-    return (this.access & Opcodes.ACC_SYNTHETIC) != 0;
-  }
-
-  public boolean isTopLevelClass() {
-    return !getOuterClass().isPresent();
-  }
-
-  public Optional<ClassInfo> getOuterClass() {
-    return this.outerClass.fetch();
-  }
-
-  public Optional<ClassInfo> getSuperClass() {
-    return getParent();
-  }
-
-  public String getSourceFileName() {
-    return this.sourceFile;
-  }
-
-  public boolean hasAnnotation(final Class<? extends Annotation> annotation) {
-    return hasAnnotation(ClassName.fromClass(annotation));
-  }
-
-  public boolean hasAnnotation(final ClassName annotation) {
-    return this.annotations.contains(annotation);
-  }
-
-  public Object getClassAnnotationValue(final ClassName annotation) {
-    return this.classAnnotationValues.get(annotation);
-  }
-
-  public boolean descendsFrom(final Class<?> clazz) {
-    return descendsFrom(ClassName.fromClass(clazz));
-  }
-
-  public HierarchicalClassId getHierarchicalId() {
-    return new HierarchicalClassId(this.id, getDeepHash());
-  }
-
-  public BigInteger getDeepHash() {
-    BigInteger hash = getHash();
-    final Optional<ClassInfo> parent = getParent();
-    if (parent.isPresent()) {
-      hash = hash.add(parent.get().getHash());
-    }
-    final Optional<ClassInfo> outer = getOuterClass();
-    if (outer.isPresent()) {
-      hash = hash.add(outer.get().getHash());
-    }
-    return hash;
-  }
-
-  public BigInteger getHash() {
-    return BigInteger.valueOf(this.id.getHash());
-  }
-
-  private Optional<ClassInfo> getParent() {
-    if (this.superClass == null) {
-      return Optional.empty();
-    }
-    return this.superClass.fetch();
-  }
-
-  private boolean descendsFrom(final ClassName clazz) {
-
-    if (!this.getSuperClass().isPresent()) {
-      return false;
+    public ClassInfo(final ClassPointer superClass, final ClassPointer outerClass, final ClassInfoBuilder builder) {
+        this.superClass = superClass;
+        this.outerClass = outerClass;
+        this.id = builder.id;
+        this.access = builder.access;
+        this.codeLines = builder.codeLines;
+        this.annotations = FCollection.map(builder.annotations, ClassName.stringToClassName());
+        this.sourceFile = builder.sourceFile;
+        this.classAnnotationValues = builder.classAnnotationValues;
     }
 
-    if (this.getSuperClass().get().getName().equals(clazz)) {
-      return true;
+    public int getNumberOfCodeLines() {
+        return this.codeLines.size();
     }
 
-    return getSuperClass().get().descendsFrom(clazz);
-  }
+    public boolean isCodeLine(final int line) {
+        return this.codeLines.contains(line);
+    }
 
-  public static Predicate<ClassInfo> matchIfAbstract() {
-    return a -> a.isAbstract();
-  }
+    public ClassIdentifier getId() {
+        return this.id;
+    }
 
-  @Override
-  public String toString() {
-    return this.id.getName().asJavaName();
-  }
+    public ClassName getName() {
+        return this.id.getName();
+    }
 
-  public static Function<ClassInfo, ClassName> toClassName() {
-    return a -> a.getName();
-  }
+    public boolean isInterface() {
+        return (this.access & Opcodes.ACC_INTERFACE) != 0;
+    }
 
-  public static Function<ClassInfo, HierarchicalClassId> toFullClassId() {
-    return a -> a.getHierarchicalId();
-  }
+    public boolean isAbstract() {
+        return (this.access & Opcodes.ACC_ABSTRACT) != 0;
+    }
+
+    public boolean isSynthetic() {
+        return (this.access & Opcodes.ACC_SYNTHETIC) != 0;
+    }
+
+    public boolean isTopLevelClass() {
+        return !getOuterClass().isPresent();
+    }
+
+    public Optional<ClassInfo> getOuterClass() {
+        return this.outerClass.fetch();
+    }
+
+    public Optional<ClassInfo> getSuperClass() {
+        return getParent();
+    }
+
+    public String getSourceFileName() {
+        return this.sourceFile;
+    }
+
+    public boolean hasAnnotation(final Class<? extends Annotation> annotation) {
+        return hasAnnotation(ClassName.fromClass(annotation));
+    }
+
+    public boolean hasAnnotation(final ClassName annotation) {
+        return this.annotations.contains(annotation);
+    }
+
+    public Object getClassAnnotationValue(final ClassName annotation) {
+        return this.classAnnotationValues.get(annotation);
+    }
+
+    public boolean descendsFrom(final Class<?> clazz) {
+        return descendsFrom(ClassName.fromClass(clazz));
+    }
+
+    public HierarchicalClassId getHierarchicalId() {
+        return new HierarchicalClassId(this.id, getDeepHash());
+    }
+
+    public BigInteger getDeepHash() {
+        BigInteger hash = getHash();
+        final Optional<ClassInfo> parent = getParent();
+        if (parent.isPresent()) {
+            hash = hash.add(parent.get().getHash());
+        }
+        final Optional<ClassInfo> outer = getOuterClass();
+        if (outer.isPresent()) {
+            hash = hash.add(outer.get().getHash());
+        }
+        return hash;
+    }
+
+    public BigInteger getHash() {
+        return BigInteger.valueOf(this.id.getHash());
+    }
+
+    private Optional<ClassInfo> getParent() {
+        if (this.superClass == null) {
+            return Optional.empty();
+        }
+        return this.superClass.fetch();
+    }
+
+    private boolean descendsFrom(final ClassName clazz) {
+
+        if (!this.getSuperClass().isPresent()) {
+            return false;
+        }
+
+        if (this.getSuperClass().get().getName().equals(clazz)) {
+            return true;
+        }
+
+        return getSuperClass().get().descendsFrom(clazz);
+    }
+
+    public static Predicate<ClassInfo> matchIfAbstract() {
+        return a -> a.isAbstract();
+    }
+
+    @Override
+    public String toString() {
+        return this.id.getName().asJavaName();
+    }
+
+    public static Function<ClassInfo, ClassName> toClassName() {
+        return a -> a.getName();
+    }
+
+    public static Function<ClassInfo, HierarchicalClassId> toFullClassId() {
+        return a -> a.getHierarchicalId();
+    }
 }

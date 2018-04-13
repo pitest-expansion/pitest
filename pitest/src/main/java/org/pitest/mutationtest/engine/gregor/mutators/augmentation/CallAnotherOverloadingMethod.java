@@ -63,7 +63,7 @@ class ReplaceWithOverloadingMethod extends MethodVisitor {
         this.context = context;
     }
 
-    /*
+    /**
      * If the INVOKE keywords exist, then start replacing it with other overloading
      * methods.
      */
@@ -83,7 +83,13 @@ class ReplaceWithOverloadingMethod extends MethodVisitor {
     }
 
     /**
-     * Somehow get bytesource from the current class and extract all overloading methods of the current method.
+     * Get class info
+     */
+     
+    
+    /**
+     * Somehow get bytesource from the current class and extract all overloading
+     * methods of the current method.
      * 
      * @param owner
      *            TODO
@@ -95,8 +101,37 @@ class ReplaceWithOverloadingMethod extends MethodVisitor {
      *            TODO
      */
     private void replaceMethodDescriptorMutation(int opcode, String owner, String name, String desc, boolean itf) {
+        
         // I should use bytesource from GregorEngineFactory.java
         // -> GregorMutationEngine.java -> GregorMutater.java
+
+        /*
+         * 
+         * MethodMutatorFactor factory, MutationContext context, MethodInfo methodInfo,
+         * MethodVisitor methodVisitor 
+         * 
+         * ByteSource is an interface and therefore can
+         * accept CachingByteArraySource, ClassloaderByteArraySource,
+         * ClassPathByteArraySource, ResourceFolderByteArraySource.
+         * 
+         * The problem: Bytesource doesn't take any argument I can get with
+         * MethodMutatorFactory and MethodVisitor
+         * 
+         * I can extend method visitor, then extend GregorMutater or anything that
+         * contains bytesource, then do a hashmap to save the method descriptors, and
+         * replace it with the methods. Maybe use a dictionary.
+         * 
+         * 
+         * 
+         * The rest is similar to doing ROR, but use a different method to rewrite
+         * INVOKE bytecode.
+         * 
+         * I think I need to extend MethodMutatorFactory and MethodVisitor, then use
+         * information from there to use GregorMutater.
+         * 
+         * MethodMutatorFactory gets MutationContext, which has getClassInfo(), returns
+         * classInfo
+         */
 
     }
 
