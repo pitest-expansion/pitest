@@ -42,13 +42,17 @@ import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
 /**
- * Use byteSource to replace methods name and method descriptor in code.
+ * Use ClassByteArraySource byteSource interface to replace methods name and method descriptor in
+ * code. ByteSource is an interface and therefore can accept
+ * CatchingByteArraySource, ClassloaderByteArraySource,
+ * ClassPathByteArraySource, ResourceFolderByteArraySource
  */
 public class GregorMutater implements Mutater {
 
     private final Map<String, String> computeCache = new HashMap<>();
     private final Predicate<MethodInfo> filter;
     private final ClassByteArraySource byteSource;
+
     private final Set<MethodMutatorFactory> mutators = new HashSet<>();
 
     public GregorMutater(final ClassByteArraySource byteSource, final Predicate<MethodInfo> filter,
@@ -83,7 +87,8 @@ public class GregorMutater implements Mutater {
      *            A ClassContext input to be used in the function
      *            findMutationForBytes
      * @return Function<byte[], List<MutationDetails>> A function interface with
-     *         input as an array of byte[], output to List<MutationDetails>
+     *         input as an array of byte[], output to List<MutationDetails> ??? not
+     *         sure about this
      */
     private Function<byte[], List<MutationDetails>> findMutations(final ClassContext context) {
         return bytes -> findMutationsForBytes(context, bytes);
@@ -91,10 +96,15 @@ public class GregorMutater implements Mutater {
 
     /**
      * Used as a lambda function for findMutations. Read the stream of byte[] from a
-     * class then save the mutations in an ArrayList in ClassContext object. Then return the list.
-     * @param context ClassContext to save the mutations.
-     * @param classToMutat An array of byte to scan for possible mutations.
-     * @return List<MutationDetails> A list of mutations saved in the "context" parameter
+     * class then save the mutations in an ArrayList in ClassContext object. Then
+     * return the ArrayList.
+     * 
+     * @param context
+     *            ClassContext to save the mutations.
+     * @param classToMutat
+     *            An array of byte to scan for possible mutations.
+     * @return List<MutationDetails> A list of mutations saved in the "context"
+     *         parameter
      */
     private List<MutationDetails> findMutationsForBytes(final ClassContext context, final byte[] classToMutate) {
 
@@ -126,6 +136,15 @@ public class GregorMutater implements Mutater {
 
         return new Mutant(details.get(0), w.toByteArray());
 
+    }
+
+    /**
+     * @return Return the byteSource object. Useful for extracting data about the
+     *         current class and potentially manipulate it (methods, overloading
+     *         methods/constructors)
+     */
+    public ClassByteArraySource getByteSource() {
+        return this.byteSource;
     }
 
     private static Predicate<MethodMutatorFactory> isMutatorFor(final MutationIdentifier id) {

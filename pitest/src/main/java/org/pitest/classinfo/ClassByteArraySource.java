@@ -18,11 +18,15 @@ import java.util.Optional;
 
 public interface ClassByteArraySource {
 
-  /**
-   * Returns bytes for a class represented in java/lang/String format
-   * @param clazz classname in com.example.Foo format
-   * @return bytes option of byte[]
-   */
-  Optional<byte[]> getBytes(String clazz);
+    /**
+     * Returns bytes for a class represented in java/lang/String format. Implemented
+     * in CachingByteArraySource, ClassloaderByteArraySource,
+     * ClassPathByteArraySource, ResourceFolderByteArraySource
+     * 
+     * @param clazz
+     *            classname in com.example.Foo format
+     * @return bytes option of byte[]
+     */
+    Optional<byte[]> getBytes(String clazz);
 
 }
