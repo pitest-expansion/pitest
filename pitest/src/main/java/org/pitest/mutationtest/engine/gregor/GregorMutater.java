@@ -62,8 +62,8 @@ public class GregorMutater implements Mutater {
         this.byteSource = byteSource;
     }
 
-    /*
-     * Implements the interface and use Optional methods to find the mutation.
+    /**
+     * Implements the interface and use Optional object to find the mutation.
      * 
      * @see
      * org.pitest.mutationtest.engine.Mutater#findMutations(org.pitest.classinfo.

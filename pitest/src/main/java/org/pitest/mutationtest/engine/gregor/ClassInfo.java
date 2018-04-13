@@ -19,6 +19,9 @@ public class ClassInfo {
     private final String superName;
     private final String[] interfaces;
 
+    /**
+     * Construct a ClassInfo object with all information about the class.
+     */
     public ClassInfo(final int version, final int access, final String name, final String signature,
             final String superName, final String[] interfaces) {
         this.version = version;

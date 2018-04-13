@@ -28,10 +28,12 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
 import org.pitest.mutationtest.engine.gregor.ZeroOperandMutation;
 
-/*
- * To remove the second operand, remove the operator and pop (normal and long) second operand.
- * To remove the first operand, remove the operator, swap the two operands and remove the top one.
- * Because the second operand is above the first operand on the stack.
+/**
+ * Implements MethodMutatorFactory. Could have used AbstractInsnMutator or
+ * AbtractJumpMutator but requires more branching. To remove the second operand,
+ * remove the operator and pop (normal and long) second operand. To remove the
+ * first operand, remove the operator, swap the two operands and remove the top
+ * one. Because the second operand is above the first operand on the stack.
  */
 public class ArithmeticOperandDeletion implements MethodMutatorFactory {
 
@@ -70,7 +72,8 @@ public class ArithmeticOperandDeletion implements MethodMutatorFactory {
 }
 
 /*
- * Check the operator type, remove it with POP/POP2 and continue the replacement of the operands.
+ * Check the operator type, remove it with POP/POP2 and continue the replacement
+ * of the operands.
  */
 class AODFirstMethodVisitor extends AbstractInsnMutator {
 
@@ -118,8 +121,8 @@ class AODFirstMethodVisitor extends AbstractInsnMutator {
         MUTATIONS.put(Opcodes.LDIV, new InsnSubstitution(Opcodes.POP2,
                 "REMOVE_SECOND_OPERATOR: Remove the second operand from a division formula (long)"));
 
-        MUTATIONS.put(Opcodes.IREM,
-                new InsnSubstitution(Opcodes.POP, "REMOVE_SECOND_OPERATOR: Remove the second operand from a modulus formula (int)"));
+        MUTATIONS.put(Opcodes.IREM, new InsnSubstitution(Opcodes.POP,
+                "REMOVE_SECOND_OPERATOR: Remove the second operand from a modulus formula (int)"));
         MUTATIONS.put(Opcodes.DREM, new InsnSubstitution(Opcodes.POP2,
                 "REMOVE_SECOND_OPERATOR: Remove the second operand from a modulus formula (double)"));
         MUTATIONS.put(Opcodes.FREM, new InsnSubstitution(Opcodes.POP,
@@ -269,4 +272,3 @@ class AODLastMethodVisitor extends MethodVisitor {
         super.visitInsn(Opcodes.POP2);
     }
 }
-

@@ -21,6 +21,9 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
+/**
+ * Further implements vistJumpInsn in ASM. Similar to AbstractInsnMutator
+ */
 public abstract class AbstractJumpMutator extends MethodVisitor {
 
   private final MethodMutatorFactory factory;
