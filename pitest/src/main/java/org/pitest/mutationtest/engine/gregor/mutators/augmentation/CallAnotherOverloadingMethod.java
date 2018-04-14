@@ -58,7 +58,7 @@ public enum CallAnotherOverloadingMethod implements MethodMutatorFactory {
 class ReplaceWithOverloadingMethod extends MethodVisitor {
     private final MethodMutatorFactory factory;
     private final MutationContext context;
-    private ResourceFolderByteArraySource byteSource;
+    private ClassByteArraySource byteSource;
     private final Map<String, String> computeCache = new HashMap<>();
 
     ReplaceWithOverloadingMethod(final MethodMutatorFactory factory, final MutationContext context,
