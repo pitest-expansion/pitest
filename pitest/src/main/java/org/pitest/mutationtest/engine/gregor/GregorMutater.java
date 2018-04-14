@@ -119,7 +119,6 @@ public class GregorMutater implements Mutater {
 
     @Override
     public Mutant getMutation(final MutationIdentifier id) {
-
         final ClassContext context = new ClassContext();
         context.setTargetMutation(Optional.ofNullable(id));
 
@@ -131,9 +130,7 @@ public class GregorMutater implements Mutater {
         final MutatingClassVisitor mca = new MutatingClassVisitor(w, context, filterMethods(),
                 FCollection.filter(this.mutators, isMutatorFor(id)), this.byteSource);
         reader.accept(mca, ClassReader.EXPAND_FRAMES);
-
         final List<MutationDetails> details = context.getMutationDetails(context.getTargetMutation().get());
-
         return new Mutant(details.get(0), w.toByteArray());
 
     }

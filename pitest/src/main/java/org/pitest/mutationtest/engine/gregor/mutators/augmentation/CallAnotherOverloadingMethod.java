@@ -1,19 +1,31 @@
 
 package org.pitest.mutationtest.engine.gregor.mutators.augmentation;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 //import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
+import org.pitest.bytecode.FrameOptions;
 import org.pitest.classinfo.ClassByteArraySource;
+import org.pitest.classinfo.ComputeClassWriter;
+import org.pitest.functional.FCollection;
+import org.pitest.mutationtest.engine.Mutant;
+import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 //import org.pitest.mutationtest.engine.MutationIdentifier;
 //import org.pitest.mutationtest.engine.gregor.AbstractInsnMutator;
 //import org.pitest.mutationtest.engine.gregor.InsnSubstitution;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.engine.gregor.MutatingClassVisitor;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
+import org.pitest.util.ResourceFolderByteArraySource;
 
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
 import org.pitest.mutationtest.engine.gregor.GregorMutationEngine;
@@ -40,28 +52,14 @@ public enum CallAnotherOverloadingMethod implements MethodMutatorFactory {
     public String getName() {
         return "Replaced with overloading method - " + name();
     }
-    /*
-     * TODO M2 mutation Invoking object method are called using INVOKEVIRTUAL,
-     * INVOKESPECIAL, INVOKEINTERFACE, INVOKESTATIC. Overloading methods are method
-     * that have the same name and return type, but different parameters.
-     * INVOKEVIRTUAL utd/Add.add(III)I INVOKEVIRTUAL utd/Add.add(II)I
-     * 
-     * Meaning: static method vs non-static method can overload each other ->
-     * INVOKEVIRTUAL and INVOKESTATIC package name is the same (overload, not
-     * override) same classname and method name (utd/Add.add) same return type
-     * different descriptor/parameter.
-     * 
-     * This should work with constructor as well.
-     * 
-     * How do I dissect the method descriptor?
-     */
 
 }
 
 class ReplaceWithOverloadingMethod extends MethodVisitor {
     private final MethodMutatorFactory factory;
     private final MutationContext context;
-    private ClassByteArraySource byteSource;
+    private ResourceFolderByteArraySource byteSource;
+    private final Map<String, String> computeCache = new HashMap<>();
 
     ReplaceWithOverloadingMethod(final MethodMutatorFactory factory, final MutationContext context,
             final MethodVisitor mv) {
@@ -71,13 +69,30 @@ class ReplaceWithOverloadingMethod extends MethodVisitor {
     }
 
     /**
-     * Should return an optional object to analyze the byte source. This bytesource can only be extracted with a class name.
-     * @param clazz A string to help extract data from bytesource.
-     * @return
+     * This uses getBytes method of ResourceFolderByteArraySource. It uses a
+     * className to get the byte[] for a given class.
+     * 
+     * @return An Option<byte[]> that contains information about this class. Now how
+     *         to use it?
      */
-    private  Optional<byte[]> getBytes(String clazz){
-        return Optional;
+    private Optional<byte[]> returnByteArray() {
+        return byteSource.getBytes(this.context.getClassInfo().getName());
     }
+
+    private void getOverloadingMethod() {
+
+        final Optional<byte[]> bytes = this.returnByteArray();
+        final ClassReader reader = new ClassReader(bytes.get());
+        final ClassWriter w = new ComputeClassWriter(this.byteSource, this.computeCache,
+                FrameOptions.pickFlags(bytes.get()));
+        
+        final MutatingClassVisitor mca = new MutatingClassVisitor(w, context, filterMethods(),
+                FCollection.filter(this.mutators, isMutatorFor(id)), this.byteSource);
+        reader.accept(mca, ClassReader.EXPAND_FRAMES);
+        final List<MutationDetails> details = context.getMutationDetails(context.getTargetMutation().get());
+        return new Mutant(details.get(0), w.toByteArray());
+    }
+
     public ClassByteArraySource getByteSource() {
         return this.byteSource;
     }
@@ -109,24 +124,27 @@ class ReplaceWithOverloadingMethod extends MethodVisitor {
      * Get class info
      */
 
-/**
- * This method actually replace the method descriptor and method signature
- * @param opcode The opcode to write into bytecode.
- * @param owner Fully qualified package name.
- * @param name Fully qualified method name
- * @param desc Method description
- * @param itf method access flag. Usually 0??? Not sure.
- */
+    /**
+     * This method actually replace the method descriptor and method signature
+     * 
+     * @param opcode
+     *            The opcode to write into bytecode.
+     * @param owner
+     *            Fully qualified package name.
+     * @param name
+     *            Fully qualified method name
+     * @param desc
+     *            Method description
+     * @param itf
+     *            method access flag. Usually 0??? Not sure.
+     */
     private void replaceMethodDescriptorMutation(int opcode, String owner, String name, String desc, boolean itf) {
-
-        // I should use bytesource from GregorEngineFactory.java
-        // -> GregorMutationEngine.java -> GregorMutater.java
-
-        /*
-         * 
-I changed the method signature to include Class
-         */
 
     }
 
 }
+
+/*
+ * TODO I got byteSource. Now look in GregorMutater.java to see how to use it at
+ * the mutator level.
+ */
