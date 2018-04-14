@@ -42,9 +42,9 @@ import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
 /**
- * Use ClassByteArraySource byteSource interface to replace methods name and method descriptor in
- * code. ByteSource is an interface and therefore can accept
- * CatchingByteArraySource, ClassloaderByteArraySource,
+ * Use ClassByteArraySource byteSource interface to replace methods name and
+ * method descriptor in code. ByteSource is an interface and therefore can
+ * accept CatchingByteArraySource, ClassloaderByteArraySource,
  * ClassPathByteArraySource, ResourceFolderByteArraySource
  */
 public class GregorMutater implements Mutater {
@@ -65,9 +65,8 @@ public class GregorMutater implements Mutater {
     /**
      * Implements the interface and use Optional object to find the mutation.
      * 
-     * @see
-     * org.pitest.mutationtest.engine.Mutater#findMutations(org.pitest.classinfo.
-     * ClassName)
+     * @see org.pitest.mutationtest.engine.Mutater#findMutations(org.pitest.classinfo.
+     *      ClassName)
      */
     @Override
     public List<MutationDetails> findMutations(final ClassName classToMutate) {
@@ -110,7 +109,8 @@ public class GregorMutater implements Mutater {
 
         final ClassReader first = new ClassReader(classToMutate);
         final NullVisitor nv = new NullVisitor();
-        final MutatingClassVisitor mca = new MutatingClassVisitor(nv, context, filterMethods(), this.mutators, this.byteSource);
+        final MutatingClassVisitor mca = new MutatingClassVisitor(nv, context, filterMethods(), this.mutators,
+                this.byteSource);
 
         first.accept(mca, ClassReader.EXPAND_FRAMES);
 
