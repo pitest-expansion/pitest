@@ -30,7 +30,8 @@ import org.pitest.mutationtest.engine.gregor.analysis.InstructionTrackingMethodV
 import org.pitest.mutationtest.engine.gregor.blocks.BlockTrackingMethodDecorator;
 
 /**
- * Visit a class and create mutations.
+ * This is an adapter/filter according to ASM user manual. Visit a class and
+ * create mutations.
  *
  */
 class MutatingClassVisitor extends ClassVisitor {
@@ -85,13 +86,14 @@ class MutatingClassVisitor extends ClassVisitor {
 
     }
 
-/**
- * Added ClassByteArraySource to the MethodMutatorFactory. 
- * @param methodContext
- * @param methodInfo
- * @param methodVisitor
- * @return An object that extends MethodVisitor
- */
+    /**
+     * Added ClassByteArraySource to the MethodMutatorFactory.
+     * 
+     * @param methodContext
+     * @param methodInfo
+     * @param methodVisitor
+     * @return An object that extends MethodVisitor
+     */
     private MethodVisitor visitMethodForMutation(MethodMutationContext methodContext, final MethodInfo methodInfo,
             final MethodVisitor methodVisitor) {
 

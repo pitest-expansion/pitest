@@ -117,6 +117,9 @@ public class GregorMutater implements Mutater {
         return new ArrayList<>(context.getCollectedMutations());
     }
 
+    /**
+     * Use the optimization pattern similar to page 21 of ASM user guide.
+     */
     @Override
     public Mutant getMutation(final MutationIdentifier id) {
         final ClassContext context = new ClassContext();

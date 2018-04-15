@@ -82,7 +82,7 @@ public class MethodInfo {
     return isConstructor(this.methodName);
   }
   /**
-   * Check if this method contains "<init>" in the class file (constructor)
+   * Check if this method contains \< init \> in the class file (constructor)
    * @return
    */
   public static boolean isConstructor(final String methodName) {

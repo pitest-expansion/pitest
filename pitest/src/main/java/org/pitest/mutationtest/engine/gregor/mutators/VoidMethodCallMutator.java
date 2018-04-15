@@ -23,6 +23,10 @@ import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
 
+/**
+ * The void method call mutator removes method calls to void methods. 
+ *
+ */
 public enum VoidMethodCallMutator implements MethodMutatorFactory {
 
   VOID_METHOD_CALL_MUTATOR;

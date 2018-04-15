@@ -24,8 +24,8 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
 
 /**
- * Replaces constructor calls with null. Uses MethodCallMethodVisitor to
- * identify constructor call.
+ * Replaces constructor calls with null. Uses MethodInfo to check for constructor and MethodCallMethodVisitor to return
+ * a null value (which applies to normal method as well)
  *
  * 
  */
@@ -44,6 +44,9 @@ public enum ConstructorCallMutator implements MethodMutatorFactory {
         return this.getClass().getName();
     }
 
+    /**
+     * Check if this is a constructor and return a BiFunction object
+     */
     private static BiFunction<String, String, Boolean> constructors() {
         return (name, desc) -> MethodInfo.isConstructor(name);
     }
