@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 
-mvn install -DskipTests
+mvn -T 4 install -DskipTests
 read
