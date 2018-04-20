@@ -1,9 +1,9 @@
 package org.pitest.mutationtest.engine.gregor.mutators.augmentation;
 
 import org.objectweb.asm.MethodVisitor;
-import org.mockito.internal.configuration.injection.filter.FinalMockCandidateFilter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 //import org.pitest.mutationtest.engine.gregor.AbstractInsnMutator;
@@ -24,62 +24,33 @@ import org.pitest.mutationtest.engine.gregor.MutationContext;
  */
 public enum CheckNullObjectMutator implements MethodMutatorFactory {
 
-	CHECK_NULL_OBJECT_MUTATOR;
+    CHECK_NULL_OBJECT_MUTATOR;
 
-	/*
-	 * Create a MethodVisitor class to add null check (CheckNullObjectVisitor)
-	 * 
-	 * @see
-	 * org.pitest.mutationtest.engine.gregor.MethodMutatorFactory#create(org.pitest.
-	 * mutationtest.engine.gregor.MutationContext,
-	 * org.pitest.mutationtest.engine.gregor.MethodInfo,
-	 * org.objectweb.asm.MethodVisitor)
-	 */
-	@Override
-	public MethodVisitor create(final MutationContext context, final MethodInfo methodInfo, final MethodVisitor mv,
-			ClassByteArraySource byteSource) {
-		// return new CheckLDCOneWordOrTwoWord(this, methodInfo, context, mv);
-		return new CheckNullObjectVisitor(this, methodInfo, context, mv);
-	}
+    /*
+     * Create a MethodVisitor class to add null check (CheckNullObjectVisitor)
+     * 
+     * @see
+     * org.pitest.mutationtest.engine.gregor.MethodMutatorFactory#create(org.pitest.
+     * mutationtest.engine.gregor.MutationContext,
+     * org.pitest.mutationtest.engine.gregor.MethodInfo,
+     * org.objectweb.asm.MethodVisitor)
+     */
+    @Override
+    public MethodVisitor create(final MutationContext context, final MethodInfo methodInfo, final MethodVisitor mv,
+            ClassByteArraySource byteSource) {
+        return new CheckNullObjectVisitor(this, methodInfo, context, mv);
+    }
 
-	@Override
-	public String getGloballyUniqueId() {
-		return this.getClass().getName() + "_" + name();
-	}
+    @Override
+    public String getGloballyUniqueId() {
+        return this.getClass().getName() + "_" + name();
+    }
 
-	@Override
-	public String getName() {
-		return "Check if object is null - " + name();
-	}
+    @Override
+    public String getName() {
+        return "Check if object is null - " + name();
+    }
 
-}
-
-class CheckLDCOneWordOrTwoWord extends MethodVisitor {
-
-	private final MethodMutatorFactory factory;
-	private final MutationContext context;
-	final MethodInfo methodInfo;
-
-	CheckLDCOneWordOrTwoWord(final MethodMutatorFactory factory, final MethodInfo methodInfo,
-			final MutationContext context, final MethodVisitor mv) {
-		super(Opcodes.ASM6, mv);
-		this.factory = factory;
-		this.methodInfo = methodInfo;
-		this.context = context;
-	}
-
-	@Override
-	public void visitLdcInsn(Object cst) {
-		super.visitLdcInsn(cst);
-		if (cst instanceof Integer || cst instanceof Float) {
-			CheckNullObjectVisitor a = new CheckNullObjectVisitor(factory, methodInfo, context, mv);
-			a.setWordLength(1);
-		}
-		if (cst instanceof Double || cst instanceof Long) {
-			CheckNullObjectVisitor a = new CheckNullObjectVisitor(factory, methodInfo, context, mv);
-			a.setWordLength(2);
-		}
-	}
 }
 
 /*
@@ -89,126 +60,172 @@ class CheckLDCOneWordOrTwoWord extends MethodVisitor {
  */
 class CheckNullObjectVisitor extends MethodVisitor {
 
-	private final MethodMutatorFactory factory;
-	private final MutationContext context;
-	public int wordLength = 1;
+    private final MethodMutatorFactory factory;
+    private final MutationContext context;
 
-	CheckNullObjectVisitor(final MethodMutatorFactory factory, final MethodInfo methodInfo,
-			final MutationContext context, final MethodVisitor mv) {
-		super(Opcodes.ASM6, mv);
-		this.factory = factory;
-		this.context = context;
-	}
+    CheckNullObjectVisitor(final MethodMutatorFactory factory, final MethodInfo methodInfo,
+            final MutationContext context, final MethodVisitor mv) {
+        super(Opcodes.ASM6, mv);
+        this.factory = factory;
+        this.context = context;
+    }
 
-	/*
-	 * Override visitFieldInsn to check for PUTFIELD or GETFIELD If the bytecode is
-	 * PUTFIELD or GETFIELD, perform a nullcheck.
-	 */
-	@Override
-	public void visitFieldInsn(int opcode, String owner, String name, String desc) {
-		if (opcode == Opcodes.GETFIELD) {
-			final MutationIdentifier muID = this.context.registerMutation(factory, "Checked for NULL object here.");
+    /**
+     * Override visitFieldInsn to check for PUTFIELD or GETFIELD If the bytecode is
+     * PUTFIELD or GETFIELD, perform a nullcheck. opcode: Opcode instruction
+     * GETFIELD, PUTFIELD owner: package name: method name that uses the variable
+     * desc: variable type
+     */
+    @Override
+    public void visitFieldInsn(int opcode, String owner, String name, String desc) {
+        final MutationIdentifier muID;
+        if (opcode == Opcodes.GETFIELD) {
+            muID = this.context.registerMutation(factory, "Checked for NULL object at GETFIELD.");
+            if (this.context.shouldMutate(muID)) {
+                mutateGetField(opcode, owner, name, desc);
+            }
 
-			if (this.context.shouldMutate(muID)) {
-				if (wordLength == 1) {
-					oneWordVariable(opcode, owner, name, desc);
-				}
-				if (wordLength == 2) {
-					twoWordVariable(opcode, owner, name, desc);
-				}
-			}
+        } else if (opcode == Opcodes.PUTFIELD) {
+            muID = this.context.registerMutation(factory, "Checked for NULL object at PUTFIELD.");
+            if (this.context.shouldMutate(muID)) {
+                mutatePutField(opcode, owner, name, desc);
+            }
+        } else {
+            super.visitFieldInsn(opcode, owner, name, desc);
+        }
+    }
 
-		} else if (opcode == Opcodes.PUTFIELD) {
-		} else
+    /**
+     * There will be a 1-word objref at the top and 1-word objref below it
+     * (instruction). Dup the top and analyze it.
+     * 
+     * @param opcode
+     * @param owner
+     * @param name
+     * @param desc
+     */
+    public void mutateGetField(int opcode, String owner, String name, String desc) {
+        super.visitInsn(Opcodes.DUP);
+        Label ifNull = new Label();
+        Label ifNotNull = new Label();
+        Label returnToNormalCode = new Label();
 
-		{
-			super.visitFieldInsn(opcode, owner, name, desc);
-		}
-	}
+        // visit ifNull if object is null
+        super.visitJumpInsn(Opcodes.IFNONNULL, ifNotNull);
 
-	/**
-	 * Deals with the case there there's a two-word variable above the object
-	 * reference. If instruction is LDC2_W, use this one. The stack will look like
-	 * this: variable (can be 1 or 2-word) -> object reference (1 word)
-	 * 
-	 */
-	public void twoWordVariable(int opcode, String owner, String name, String desc) {
-		super.visitInsn(Opcodes.DUP2_X1);
-		super.visitInsn(Opcodes.POP2);
-		super.visitInsn(Opcodes.DUP);
+        // this happens if object is null, pop the duplicate then pop the method
+        // instruction.
+        super.visitLabel(ifNull);
+        super.visitInsn(Opcodes.POP);
+        super.visitInsn(Opcodes.POP);
+        super.visitJumpInsn(Opcodes.GOTO, returnToNormalCode);
 
-		// create a label to mark where IFNULL jump to
-		Label ifNull = new Label();
-		Label ifNotNull = new Label();
-		Label returnToNormalCode = new Label();
+        // this happens if object is not null, execute the instruction.
+        super.visitLabel(ifNotNull);
+        super.visitFieldInsn(opcode, owner, name, desc);
+        super.visitJumpInsn(Opcodes.GOTO, returnToNormalCode);
 
-		// visit ifNull if object is null
-		super.visitJumpInsn(Opcodes.IFNULL, ifNull);
+        super.visitLabel(returnToNormalCode);
+    }
 
-		// this happens if object is null
-		super.visitLabel(ifNull);
-		super.visitInsn(Opcodes.POP);
-		super.visitInsn(Opcodes.POP2);
-		super.visitJumpInsn(Opcodes.GOTO, returnToNormalCode);
+    /**
+     * 
+     * @param opcode
+     * @param owner
+     * @param name
+     * @param desc
+     */
+    public void mutatePutField(int opcode, String owner, String name, String desc) {
+        final Type type = Type.getType(desc);
+        int size = type.getSize();
+        if (size == 0 || size == 1) {
+            oneWordVariable(opcode, owner, name, desc);
+        } else if (size == 2) {
+            twoWordVariable(opcode, owner, name, desc);
+        }
 
-		// this happens if object is not null
-		super.visitLabel(ifNotNull);
-		super.visitInsn(Opcodes.DUP_X2);
-		super.visitInsn(Opcodes.POP);
-		super.visitFieldInsn(opcode, owner, name, desc);
-		super.visitJumpInsn(Opcodes.GOTO, returnToNormalCode);
-		super.visitLabel(returnToNormalCode);
-	}
+        // int float boolean short char reference types = 1
+        // long double 2
+        // void 0
+    }
 
-	/**
-	 * Deals with the case there there's a one-word variable above the object
-	 * reference. If instruction is LDC, use this one. The stack will look like
-	 * this: variable (can be 1 or 2-word) -> object reference (1 word)
-	 * 
-	 * 
-	 */
-	public void oneWordVariable(int opcode, String owner, String name, String desc) {
-		super.visitInsn(Opcodes.DUP_X1);
-		super.visitInsn(Opcodes.POP);
-		super.visitInsn(Opcodes.DUP);
+    /**
+     * Deals with the case there there's a two-word variable above the object
+     * reference. If instruction is LDC2_W, use this one. The stack will look like
+     * this: variable (can be 1 or 2-word) -> object reference (1 word)
+     * 
+     */
+    public void twoWordVariable(int opcode, String owner, String name, String desc) {
+        super.visitInsn(Opcodes.DUP2_X1);
+        super.visitInsn(Opcodes.POP2);
+        super.visitInsn(Opcodes.DUP);
 
-		// create a label to mark where IFNULL jump to
-		Label ifNull = new Label();
-		Label ifNotNull = new Label();
-		Label returnToNormalCode = new Label();
+        // create a label to mark where IFNULL jump to
+        Label ifNull = new Label();
+        Label ifNotNull = new Label();
+        Label returnToNormalCode = new Label();
 
-		// visit ifNull if object is null
-		super.visitJumpInsn(Opcodes.IFNULL, ifNull);
+        // visit IFNONNULL if object is not null
+        super.visitJumpInsn(Opcodes.IFNONNULL, ifNotNull);
 
-		// this happens if object is null
-		super.visitLabel(ifNull);
-		super.visitInsn(Opcodes.POP);
-		super.visitInsn(Opcodes.POP);
-		super.visitJumpInsn(Opcodes.GOTO, returnToNormalCode);
+        // this happens if object is null
+        super.visitLabel(ifNull);
+        super.visitInsn(Opcodes.POP);
+        super.visitInsn(Opcodes.POP2);
+        super.visitJumpInsn(Opcodes.GOTO, returnToNormalCode);
 
-		// this happens if object is not null
-		super.visitLabel(ifNotNull);
-		super.visitInsn(Opcodes.DUP_X2);
-		super.visitInsn(Opcodes.POP);
-		super.visitFieldInsn(opcode, owner, name, desc);
-		super.visitJumpInsn(Opcodes.GOTO, returnToNormalCode);
-		super.visitLabel(returnToNormalCode);
-	}
+        // this happens if object is not null
+        super.visitLabel(ifNotNull);
+        super.visitInsn(Opcodes.DUP_X2);
+        super.visitInsn(Opcodes.POP);
+        super.visitFieldInsn(opcode, owner, name, desc);
+        super.visitJumpInsn(Opcodes.GOTO, returnToNormalCode);
+        super.visitLabel(returnToNormalCode);
+    }
 
-	/**
-	 * We don't introduce any new variable, just one computation, so the maxStack
-	 * should not change. In FrameOptions.java, the ClassWriter already has
-	 * COMPUTE_FRAME so maybe this stack size will be automatically calculated.
-	 * 
-	 * @see org.objectweb.asm.MethodVisitor#visitMaxs(int, int)
-	 */
-	@Override
-	public void visitMaxs(int maxStack, int maxLocals) {
-		super.visitMaxs(maxStack, maxLocals);
-	}
+    /**
+     * Deals with the case there there's a one-word variable above the object
+     * reference. If instruction is LDC, use this one. The stack will look like
+     * this: variable (can be 1 or 2-word) -> object reference (1 word)
+     * 
+     * 
+     */
+    public void oneWordVariable(int opcode, String owner, String name, String desc) {
+        super.visitInsn(Opcodes.DUP_X1);
+        super.visitInsn(Opcodes.POP);
+        super.visitInsn(Opcodes.DUP);
 
-	public void setWordLength(int length) {
-		this.wordLength = length;
-	}
+        // create a label to mark where IFNULL jump to
+        Label ifNull = new Label();
+        Label ifNotNull = new Label();
+        Label returnToNormalCode = new Label();
 
+        // visit IFNULL if object is not null
+        super.visitJumpInsn(Opcodes.IFNONNULL, ifNotNull);
+
+        // this happens if object is null
+        super.visitLabel(ifNull);
+        super.visitInsn(Opcodes.POP);
+        super.visitInsn(Opcodes.POP);
+        super.visitJumpInsn(Opcodes.GOTO, returnToNormalCode);
+
+        // this happens if object is not null
+        super.visitLabel(ifNotNull);
+        super.visitInsn(Opcodes.SWAP);
+        super.visitFieldInsn(opcode, owner, name, desc);
+        super.visitJumpInsn(Opcodes.GOTO, returnToNormalCode);
+        super.visitLabel(returnToNormalCode);
+    }
+
+    /**
+     * We don't introduce any new variable, just one computation, so the maxStack
+     * should not change. In FrameOptions.java, the ClassWriter already has
+     * COMPUTE_FRAME so maybe this stack size will be automatically calculated.
+     * 
+     * @see org.objectweb.asm.MethodVisitor#visitMaxs(int, int)
+     */
+    @Override
+    public void visitMaxs(int maxStack, int maxLocals) {
+        super.visitMaxs(maxStack, maxLocals);
+    }
 }
