@@ -251,6 +251,7 @@ public final class Mutator {
     /**
      * Default set of mutators - designed to provide balance between strength and
      * performance
+     * @return a collection of mutations.
      */
     public static Collection<MethodMutatorFactory> defaults() {
         return group(InvertNegsMutator.INVERT_NEGS_MUTATOR, ReturnValsMutator.RETURN_VALS_MUTATOR,
@@ -264,6 +265,7 @@ public final class Mutator {
     /**
      * Proposed new defaults - replaced the RETURN_VALS mutator with the new more
      * stable set
+     * @return a collection of mutations.
      */
     public static Collection<MethodMutatorFactory> newDefaults() {
         return combine(group(InvertNegsMutator.INVERT_NEGS_MUTATOR, MathMutator.MATH_MUTATOR,

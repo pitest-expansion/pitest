@@ -246,7 +246,6 @@ public final class MutationDetails implements Serializable {
 
   /**
    * Zero based index to first affected ASM instruction
-   * @return
    */
   public int getInstructionIndex() {
     return getFirstIndex() - 1;

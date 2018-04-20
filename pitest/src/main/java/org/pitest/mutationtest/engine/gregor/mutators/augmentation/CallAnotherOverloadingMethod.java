@@ -2,7 +2,7 @@
 package org.pitest.mutationtest.engine.gregor.mutators.augmentation;
 
 import java.util.HashMap;
-import java.util.List;
+//import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -14,22 +14,18 @@ import org.objectweb.asm.Opcodes;
 import org.pitest.bytecode.FrameOptions;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ComputeClassWriter;
-import org.pitest.functional.FCollection;
-import org.pitest.mutationtest.engine.Mutant;
-import org.pitest.mutationtest.engine.MutationDetails;
+//import org.pitest.functional.FCollection;
+//import org.pitest.mutationtest.engine.Mutant;
+//import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 //import org.pitest.mutationtest.engine.MutationIdentifier;
 //import org.pitest.mutationtest.engine.gregor.AbstractInsnMutator;
 //import org.pitest.mutationtest.engine.gregor.InsnSubstitution;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
-import org.pitest.mutationtest.engine.gregor.MutatingClassVisitor;
+//import org.pitest.mutationtest.engine.gregor.MutatingClassVisitor;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
-import org.pitest.util.ResourceFolderByteArraySource;
 
-import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
-import org.pitest.mutationtest.engine.gregor.GregorMutationEngine;
-import org.pitest.mutationtest.engine.gregor.GregorMutater;
 
 public enum CallAnotherOverloadingMethod implements MethodMutatorFactory {
 
@@ -86,11 +82,11 @@ class ReplaceWithOverloadingMethod extends MethodVisitor {
         final ClassWriter w = new ComputeClassWriter(this.byteSource, this.computeCache,
                 FrameOptions.pickFlags(bytes.get()));
         
-        final MutatingClassVisitor mca = new MutatingClassVisitor(w, context, filterMethods(),
-                FCollection.filter(this.mutators, isMutatorFor(id)), this.byteSource);
-        reader.accept(mca, ClassReader.EXPAND_FRAMES);
-        final List<MutationDetails> details = context.getMutationDetails(context.getTargetMutation().get());
-        return new Mutant(details.get(0), w.toByteArray());
+//        final MutatingClassVisitor mca = new MutatingClassVisitor(w, context, filterMethods(),
+//                FCollection.filter(this.mutators, isMutatorFor(id)), this.byteSource);
+//        reader.accept(mca, ClassReader.EXPAND_FRAMES);
+//        final List<MutationDetails> details = context.getMutationDetails(context.getTargetMutation().get());
+//        return new Mutant(details.get(0), w.toByteArray());
     }
 
     public ClassByteArraySource getByteSource() {

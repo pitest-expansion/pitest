@@ -60,7 +60,7 @@ public class MethodInfo {
 
   /**
    * Check if this method is static
-   * @return
+   * @return is this method static?
    */
   public boolean isStatic() {
     return ((this.access & Opcodes.ACC_STATIC) != 0);
@@ -68,7 +68,7 @@ public class MethodInfo {
 
   /**
    * Check this method is synthetic
-   * @return
+   * @return is it synthetic?
    */
   public boolean isSynthetic() {
     return ((this.access & Opcodes.ACC_SYNTHETIC) != 0);
@@ -76,14 +76,15 @@ public class MethodInfo {
 
   /**
    * Check if this method is a constructor.
-   * @return
+   * @return is this a constructor?
    */
   public boolean isConstructor() {
     return isConstructor(this.methodName);
   }
   /**
-   * Check if this method contains \< init \> in the class file (constructor)
-   * @return
+   * Check if this method contains  init  in the class file (constructor)
+   * @param methodName method name
+   * @return is this a constructor?
    */
   public static boolean isConstructor(final String methodName) {
     return "<init>".equals(methodName);
@@ -91,7 +92,7 @@ public class MethodInfo {
 
   /**
    * Use ASM getReturnType function to get the return type.
-   * @return
+   * @return return type
    */
   public Type getReturnType() {
     return Type.getReturnType(this.methodDescriptor);
@@ -99,8 +100,8 @@ public class MethodInfo {
 
   /**
    * Check if a method returns void using ASM Type.VOID_TYPE
-   * @param desc
-   * @return
+   * @param desc method name?
+   * @return a method is void or not.
    */
   public static boolean isVoid(final String desc) {
     return Type.getReturnType(desc).equals(Type.VOID_TYPE);

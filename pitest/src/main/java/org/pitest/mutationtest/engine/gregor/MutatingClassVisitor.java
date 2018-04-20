@@ -34,7 +34,7 @@ import org.pitest.mutationtest.engine.gregor.blocks.BlockTrackingMethodDecorator
  * create mutations.
  *
  */
-class MutatingClassVisitor extends ClassVisitor {
+public class MutatingClassVisitor extends ClassVisitor {
 
     private final Predicate<MethodInfo> filter;
     private final ClassContext context;

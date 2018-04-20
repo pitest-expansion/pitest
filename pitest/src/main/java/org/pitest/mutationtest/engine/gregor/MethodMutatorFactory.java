@@ -41,11 +41,6 @@ public interface MethodMutatorFactory {
 
     /**
      * To be implemented in various mutators in their own package. Visit a method and create mutations. 
-     * @param context
-     * @param methodInfo
-     * @param methodVisitor
-     * @param byteSource
-     * @return
      */
     MethodVisitor create(MutationContext context, MethodInfo methodInfo, MethodVisitor methodVisitor, ClassByteArraySource byteSource);
 

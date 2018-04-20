@@ -8,7 +8,6 @@ import org.pitest.functional.FArray;
  * Contains all information about a class. Also contain a method to convert a
  * Java class to Groovy class and methods to extract different parts of a class. 
  * Notice the constructor is private.
- *
  */
 public class ClassInfo {
 
@@ -21,6 +20,12 @@ public class ClassInfo {
 
     /**
      * Construct a ClassInfo object with all information about the class.
+     * @param version
+     * @param access
+     * @param name
+     * @param signature
+     * @param superName
+     * @param interfaces
      */
     public ClassInfo(final int version, final int access, final String name, final String signature,
             final String superName, final String[] interfaces) {
