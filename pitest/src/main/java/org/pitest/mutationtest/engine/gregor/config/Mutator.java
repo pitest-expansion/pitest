@@ -105,7 +105,7 @@ public final class Mutator {
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR);
 
     /**
-     * Default mutator that replaces an arithmetic expression
+     * Augmenting mutator that replaces an arithmetic expression
      * by each of the other ones.
      */
     add("ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR",
@@ -253,7 +253,6 @@ public final class Mutator {
         VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR,
         NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
-        ArithmeticOperatorReplacementMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR,
         IncrementsMutator.INCREMENTS_MUTATOR);
   }
 
@@ -266,7 +265,6 @@ public final class Mutator {
         VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR,
         NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
-        ArithmeticOperatorReplacementMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR,
         IncrementsMutator.INCREMENTS_MUTATOR), betterReturns());
   }
 
