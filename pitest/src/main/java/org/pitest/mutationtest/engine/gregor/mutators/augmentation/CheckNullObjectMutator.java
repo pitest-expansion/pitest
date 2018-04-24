@@ -138,15 +138,12 @@ class CheckNullObjectVisitor extends MethodVisitor {
     public void mutatePutField(int opcode, String owner, String name, String desc) {
         final Type type = Type.getType(desc);
         int size = type.getSize();
-        if (size == 0 || size == 1) {
+        if (size == 1) {
             oneWordVariable(opcode, owner, name, desc);
         } else if (size == 2) {
             twoWordVariable(opcode, owner, name, desc);
         }
 
-        // int float boolean short char reference types = 1
-        // long double 2
-        // void 0
     }
 
     /**

@@ -17,6 +17,11 @@ public class ScanClassAdapter extends ClassVisitor {
 
     private static String methodToScan;
     private List<String> methodDescriptorList = new ArrayList<String>();
+    private List<String> accessTypeList = new ArrayList<String>();
+
+    public List<String> getAccessTypeList() {
+        return accessTypeList;
+    }
 
     public ScanClassAdapter(ClassVisitor cv, String methodToScan) {
         super(Opcodes.ASM6, cv);
@@ -37,9 +42,17 @@ public class ScanClassAdapter extends ClassVisitor {
             String temp = desc.substring(desc.indexOf("("), desc.indexOf(")"));
             methodDescriptorList.add(temp);
         }
+        if (isPublic) {
+            accessTypeList.add("public");
+        } else if (isPrivate) {
+            accessTypeList.add("private");
 
-        // I don't need to implement another visitor. Just scan here and return the
-        // list.
+        } else if (isProtected) {
+            accessTypeList.add("protected");
+
+        } else {
+            accessTypeList.add("public");
+        }
         return visitMethod(access, name, desc, signature, exceptions);
     }
 

@@ -56,7 +56,7 @@ class BooleanFalseMethodVisitor extends AbstractInsnMutator {
   BooleanFalseMethodVisitor(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final MutationContext context,
       final MethodVisitor writer) {
-    super(factory, methodInfo, context, writer);
+    super(factory, methodInfo, context, writer, null);
   }
 
   private static final Map<Integer, ZeroOperandMutation> MUTATIONS = new HashMap<>();

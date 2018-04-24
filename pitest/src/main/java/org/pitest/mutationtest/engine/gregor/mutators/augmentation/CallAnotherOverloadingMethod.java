@@ -14,10 +14,12 @@ import org.pitest.bytecode.FrameOptions;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ComputeClassWriter;
 import org.pitest.mutationtest.engine.MutationIdentifier;
+import org.pitest.mutationtest.engine.gregor.AbstractInsnMutator;
+import org.pitest.mutationtest.engine.gregor.AbstractJumpMutator;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
-import org.pitest.mutationtest.engine.gregor.mutators.augmentation.ScanMethodDescriptorVisitor;
+import org.pitest.mutationtest.engine.gregor.mutators.augmentation.ScanClassAdapter;
 
 import bsh.org.objectweb.asm.ClassVisitor;
 import bsh.org.objectweb.asm.CodeVisitor;
@@ -44,15 +46,20 @@ public enum CallAnotherOverloadingMethod implements MethodMutatorFactory {
 
 }
 
-class ReplaceWithOverloadingMethod extends MethodVisitor {
+class ReplaceWithOverloadingMethod extends AbstractInsnMutator {
     private final MethodMutatorFactory factory;
     private final MutationContext context;
     private ClassByteArraySource byteSource;
     private List<String> descriptorList;
+    private List<String> accessTypeList;
 
-    ReplaceWithOverloadingMethod(final MethodMutatorFactory factory, final MutationContext context,
-            final MethodVisitor mv, ClassByteArraySource byteSource) {
-        super(Opcodes.ASM6, mv);
+    public void setAccessTypeList(List<String> accessTypeList) {
+        this.accessTypeList = accessTypeList;
+    }
+
+    ReplaceWithOverloadingMethod(final MethodMutatorFactory factory, final MethodInfo methodInfo,
+            final MutationContext context, final MethodVisitor delegateMethodVisitor, ClassByteArraySource byteSource) {
+        super(Opcodes.ASM6, delegateMethodVisitor);
         this.factory = factory;
         this.context = context;
         this.byteSource = byteSource;
@@ -73,7 +80,7 @@ class ReplaceWithOverloadingMethod extends MethodVisitor {
                 String methodToScan = name;
                 getOverloadingMethod(methodToScan, owner, name, desc, itf);
                 replaceMethodDescriptorMutation(opcode, owner, name, desc, itf);
-                
+
                 visitMethodInsn(Opcodes.INVOKEVIRTUAL, owner, name, desc, itf);
             }
         } else {

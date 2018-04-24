@@ -175,7 +175,7 @@ class ArithmeticOperatorReplacementMethodVisitor extends AbstractInsnMutator {
 
     ArithmeticOperatorReplacementMethodVisitor(final MethodMutatorFactory factory, final MethodInfo methodInfo,
             final MutationContext context, final MethodVisitor writer) {
-        super(factory, methodInfo, context, writer);
+        super(factory, methodInfo, context, writer, null);
     }
 
     @Override
