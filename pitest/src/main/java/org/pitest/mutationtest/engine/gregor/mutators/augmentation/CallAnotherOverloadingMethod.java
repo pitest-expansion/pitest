@@ -81,7 +81,7 @@ class ReplaceWithOverloadingMethod extends AbstractInsnMutator {
 
         // don't deal with INVOKESPECIAL, INVOKEDYNAMIC right now.
 
-        if (opcode == Opcodes.INVOKEINTERFACE || opcode == Opcodes.INVOKEVIRTUAL || opcode == Opcodes.INVOKESTATIC) {
+        if (opcode == Opcodes.INVOKEVIRTUAL || opcode == Opcodes.INVOKESTATIC) {
             final MutationIdentifier muID = this.context.registerMutation(factory,
                     "Replaced with overloading method here.");
 
@@ -113,6 +113,7 @@ class ReplaceWithOverloadingMethod extends AbstractInsnMutator {
 
         // implement scan in an MV inside CV here
         ScanClassAdapter cv = new ScanClassAdapter(cw, name);
+        cv.setOldDescriptor(desc);
         cr.accept(cv, 0);
         descriptorList = cv.getMethodDescriptorList();
         accessTypeList = cv.getAccessTypeList();
@@ -137,37 +138,116 @@ class ReplaceWithOverloadingMethod extends AbstractInsnMutator {
      *            method access flag. Usually 0??? Not sure.
      */
     private void replaceMethodDescriptorMutation(int opcode, String owner, String name, String desc, boolean itf) {
+        if (descriptorList.size() > 1) {
+            String descReturnType = extractReturnType(desc);
 
-        String descReturnType = extractReturnType(desc);
+            Random rand = new Random();
 
-        Random rand = new Random();
+            int index = descriptorList.indexOf(desc);
+            n = rand.nextInt(descriptorList.size()) + 0;
 
-        int index = descriptorList.indexOf(desc);
-        n = rand.nextInt(descriptorList.size()) + 0;
-
-        while (n == index)
-        // if random selection is the current variable
-        {
-            n = rand.nextInt(descriptorList.size()) + 0;// select a new variable at random
-        }
-
-        final MutationIdentifier newId = this.context.registerMutation(this.factory,
-                "Replaced " + descriptorList.get(index) + " with " + descriptorList.get(n));
-        if (this.context.shouldMutate(newId)) {
-            // find index of replacment var in our list, and use
-            // that index to find index of the replacment variable
-            // in localvar table
-
-            int newOpcode = opcode;
-            String newOwner = owner;
-            String newName = name;
-            String newDesc = descriptorList.get(n);
-
-            if ((accessTypeList.get(n) & Opcodes.ACC_STATIC) != 0) {
-                newOpcode = Opcodes.INVOKESTATIC;
+            while (n == index)
+            // if random selection is the current variable
+            {
+                n = rand.nextInt(descriptorList.size()) + 0;// select a new variable at random
             }
 
-            super.visitMethodInsn(newOpcode, newOwner, newName, newDesc, itf);
+            final MutationIdentifier newId = this.context.registerMutation(this.factory,
+                    "Replaced " + descriptorList.get(index) + " with " + descriptorList.get(n));
+            if (this.context.shouldMutate(newId)) {
+                // find index of replacment var in our list, and use
+                // that index to find index of the replacment variable
+                // in local var table
+
+                int newOpcode = opcode;
+                String newOwner = owner;
+                String newName = name;
+                String newDesc = descriptorList.get(n);
+
+                if ((accessTypeList.get(n) & Opcodes.ACC_STATIC) != 0) {
+                    newOpcode = Opcodes.INVOKESTATIC;
+                }
+
+                this.replaceStack(desc, newDesc);
+                // manipulate the stack here
+                super.visitMethodInsn(newOpcode, newOwner, newName, newDesc, itf);
+            }
+        } else {
+            super.visitMethodInsn(opcode, owner, name, desc, itf);
+        }
+    }
+
+    /**
+     * Relace the old stack with a new stack. It is guaranteed that the old stack
+     * contains the new stack OR the new stack contains the old stack
+     * 
+     * @param oldDesc
+     * @param newDesc
+     */
+    public void replaceStack(String oldDesc, String newDesc) {
+        if (newContainsOld(oldDesc,newDesc)) { // newdesc is longer than old
+            int numOfPops = newDesc.length() - oldDesc.length();
+            newDesc = newDesc.substring(1, newDesc.length() - 2);
+            int index = newDesc.length() - 1;
+            for (int i = 0; i < numOfPops; i++) {
+                pushValues(""+newDesc.toCharArray()[index - i]);
+            }
+        } else if (oldContainsNew(oldDesc,newDesc)) { // olddesc is longer than new
+            int numOfPops = oldDesc.length() - newDesc.length();
+            oldDesc = oldDesc.substring(1, oldDesc.length() - 2);
+            int index = oldDesc.length() - 1;
+            for (int i = 0; i < numOfPops; i++) {
+                popValues(""+oldDesc.toCharArray()[index - i]);
+            }
+        }
+    }
+
+    public boolean oldContainsNew(String oldDesc, String newDesc) {
+
+        // add a method to check if old descriptor contains new descriptor: (III)I -> (I
+        // or (II
+        return oldDesc.length() > newDesc.length();
+
+    }
+
+    public boolean newContainsOld(String oldDesc, String newDesc) {
+
+        // add a method to check if new descriptor contains old descriptor
+        // old: (ID)I
+        // new: (IDD)I
+
+        return oldDesc.length() < newDesc.length();
+    }
+
+    /**
+     * Pop parameters from the stack
+     * 
+     * @param param
+     */
+    public void popValues(String param) {
+        if (param.equalsIgnoreCase("I") || param.equalsIgnoreCase("F")) {
+            super.visitInsn(Opcodes.POP);
+        } else if (param.equalsIgnoreCase("D") || param.equalsIgnoreCase("J")) {
+            super.visitInsn(Opcodes.POP2);
+        } else {
+            super.visitInsn(Opcodes.POP);
+        }
+    }
+
+    /**
+     * Come up with a default value of a certain type and push it onto the stack
+     */
+    public void pushValues(String param) {
+        if (param.equalsIgnoreCase("I")) {
+            super.visitInsn(Opcodes.ICONST_0);
+        } else if (param.equalsIgnoreCase("D")) {
+            super.visitInsn(Opcodes.DCONST_0);
+        } else if (param.equalsIgnoreCase("F")) {
+            super.visitInsn(Opcodes.FCONST_0);
+        } else if (param.equalsIgnoreCase("J")) {
+            super.visitInsn(Opcodes.LCONST_0);
+        } else {
+            super.visitInsn(Opcodes.ACONST_NULL);
         }
     }
 
