@@ -52,6 +52,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.augmentation.ArithmeticOperandDeletion;
 import org.pitest.mutationtest.engine.gregor.mutators.augmentation.ArithmeticOperatorReplacementMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.augmentation.CallAnotherOverloadingMethod;
 import org.pitest.mutationtest.engine.gregor.mutators.augmentation.RelationalOperatorReplacementMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiverMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
@@ -66,6 +67,11 @@ public final class Mutator {
 
     static {
 
+        /**
+         * Replace methods with overloading methods
+         */
+        add("CALL_OVERLOADING_METHOD", CallAnotherOverloadingMethod.CALL_ANOTHER_OVERLOADING_METHOD);
+        addGroup("CALL_OVERLOADING_METHOD", callOverloadingMethod());
         /**
          * Replace variable with local variables
          */
@@ -242,6 +248,10 @@ public final class Mutator {
 
     public static Collection<MethodMutatorFactory> all() {
         return fromStrings(MUTATORS.keySet());
+    }
+
+    private static Collection<MethodMutatorFactory> callOverloadingMethod() {
+        return group(CallAnotherOverloadingMethod.CALL_ANOTHER_OVERLOADING_METHOD);
     }
 
     private static Collection<MethodMutatorFactory> replaceWithLocalVariable() {
