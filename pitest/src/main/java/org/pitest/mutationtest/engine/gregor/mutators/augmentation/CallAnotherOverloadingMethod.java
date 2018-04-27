@@ -2,9 +2,12 @@
 package org.pitest.mutationtest.engine.gregor.mutators.augmentation;
 
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -27,7 +30,7 @@ import bsh.org.objectweb.asm.CodeVisitor;
 
 public enum CallAnotherOverloadingMethod implements MethodMutatorFactory {
 
-    REPLACE_WITH_OVERLOADING_METHOD;
+    CALL_ANOTHER_OVERLOADING_METHOD;
 
     @Override
     public MethodVisitor create(MutationContext context, MethodInfo methodInfo, MethodVisitor methodVisitor,
@@ -48,17 +51,21 @@ public enum CallAnotherOverloadingMethod implements MethodMutatorFactory {
 }
 
 class ReplaceWithOverloadingMethod extends AbstractInsnMutator {
+    private static final Logger LOGGER = Logger.getLogger(ReplaceWithOverloadingMethod.class.getName());
     private final MethodMutatorFactory factory;
     private final MutationContext context;
     private ClassByteArraySource byteSource;
     private List<String> descriptorList;
-    private List<String> accessTypeList;
+    private List<Integer> accessTypeList;
+    private List<Boolean> staticTypeList;
+    int n;
 
-    public void setAccessTypeList(List<String> accessTypeList) {
+    public void setAccessTypeList(List<Integer> accessTypeList) {
         this.accessTypeList = accessTypeList;
     }
 
-    ReplaceWithOverloadingMethod(final MethodMutatorFactory factory, MethodInfo methodInfo, final MutationContext context, final MethodVisitor delegateMethodVisitor, ClassByteArraySource byteSource) {
+    ReplaceWithOverloadingMethod(final MethodMutatorFactory factory, MethodInfo methodInfo,
+            final MutationContext context, final MethodVisitor delegateMethodVisitor, ClassByteArraySource byteSource) {
         super(factory, methodInfo, context, delegateMethodVisitor, null);
         this.factory = factory;
         this.context = context;
@@ -71,21 +78,108 @@ class ReplaceWithOverloadingMethod extends AbstractInsnMutator {
      */
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-        if (opcode == Opcodes.INVOKESPECIAL || opcode == Opcodes.INVOKEINTERFACE || opcode == Opcodes.INVOKESTATIC
-                || opcode == Opcodes.INVOKEVIRTUAL || opcode == Opcodes.INVOKEDYNAMIC) {
+
+        // don't deal with INVOKESPECIAL, INVOKEDYNAMIC right now.
+
+        if (opcode == Opcodes.INVOKEINTERFACE || opcode == Opcodes.INVOKEVIRTUAL || opcode == Opcodes.INVOKESTATIC) {
             final MutationIdentifier muID = this.context.registerMutation(factory,
                     "Replaced with overloading method here.");
 
             if (this.context.shouldMutate(muID)) {
-                String methodToScan = name;
-                getOverloadingMethod(methodToScan, owner, name, desc, itf);
-                replaceMethodDescriptorMutation(opcode, owner, name, desc, itf);
 
-                visitMethodInsn(Opcodes.INVOKEVIRTUAL, owner, name, desc, itf);
+                this.getOverloadingMethod(owner, name, desc, itf);
+                this.replaceMethodDescriptorMutation(opcode, owner, name, desc, itf);
+
+                // visitMethodInsn is called inside replaceMethodDescriptorMutation
             }
         } else {
             super.visitMethodInsn(opcode, owner, name, desc, itf);
         }
+    }
+
+    /**
+     * Use the ASM Scanner pattern to scan the bytesource for the same class
+     * 
+     * @param owner
+     * @param name
+     * @param desc
+     * @param itf
+     */
+    private void getOverloadingMethod(String owner, String name, String desc, boolean itf) {
+
+        ClassWriter cw = new ClassWriter(0);
+        Optional<byte[]> bytes = this.returnByteArray();
+        ClassReader cr = new ClassReader(bytes.get());
+
+        // implement scan in an MV inside CV here
+        ScanClassAdapter cv = new ScanClassAdapter(cw, name);
+        cr.accept(cv, 0);
+        descriptorList = cv.getMethodDescriptorList();
+        accessTypeList = cv.getAccessTypeList();
+        staticTypeList = cv.getStaticAccessList();
+        LOGGER.log(Level.FINE, descriptorList.toString());
+        LOGGER.log(Level.FINE, accessTypeList.toString());
+        LOGGER.log(Level.FINE, staticTypeList.toString());
+    }
+
+    /**
+     * This method actually replace the method descriptor and method signature
+     * 
+     * @param opcode
+     *            The opcode to write into bytecode.
+     * @param owner
+     *            Fully qualified package name.
+     * @param name
+     *            Fully qualified method name
+     * @param desc
+     *            Method description
+     * @param itf
+     *            method access flag. Usually 0??? Not sure.
+     */
+    private void replaceMethodDescriptorMutation(int opcode, String owner, String name, String desc, boolean itf) {
+
+        String descReturnType = extractReturnType(desc);
+
+        Random rand = new Random();
+
+        int index = descriptorList.indexOf(desc);
+        n = rand.nextInt(descriptorList.size()) + 0;
+
+        while (n == index)
+        // if random selection is the current variable
+        {
+            n = rand.nextInt(descriptorList.size()) + 0;// select a new variable at random
+        }
+
+        final MutationIdentifier newId = this.context.registerMutation(this.factory,
+                "Replaced " + descriptorList.get(index) + " with " + descriptorList.get(n));
+        if (this.context.shouldMutate(newId)) {
+            // find index of replacment var in our list, and use
+            // that index to find index of the replacment variable
+            // in localvar table
+
+            int newOpcode = opcode;
+            String newOwner = owner;
+            String newName = name;
+            String newDesc = descriptorList.get(n);
+
+            if ((accessTypeList.get(n) & Opcodes.ACC_STATIC) != 0) {
+                newOpcode = Opcodes.INVOKESTATIC;
+            }
+
+            super.visitMethodInsn(newOpcode, newOwner, newName, newDesc, itf);
+        }
+    }
+
+    /**
+     * For this string: (III)D, return ")D". In ASM, this means get the return type
+     * of a method.
+     * 
+     * @param in
+     * @return
+     */
+    public String extractReturnType(String in) {
+        return in.substring(in.indexOf(")"));
     }
 
     /**
@@ -110,43 +204,12 @@ class ReplaceWithOverloadingMethod extends AbstractInsnMutator {
         return byteSource.getBytes(this.context.getClassInfo().getName());
     }
 
-    private void getOverloadingMethod(String methodToScan, String owner, String name, String desc, boolean itf) {
-
-        ClassWriter cw = new ClassWriter(0);
-        Optional<byte[]> bytes = this.returnByteArray();
-        ClassReader cr = new ClassReader(bytes.get());
-
-        // implement scan in an MV inside CV here
-        ScanClassAdapter cv = new ScanClassAdapter(cw, methodToScan);
-        cr.accept(cv, 0);
-        descriptorList = cv.getMethodDescriptorList();
-
-    }
-
     public ClassByteArraySource getByteSource() {
         return this.byteSource;
     }
 
     public void setByteSource(ClassByteArraySource byteSource) {
         this.byteSource = byteSource;
-    }
-
-    /**
-     * This method actually replace the method descriptor and method signature
-     * 
-     * @param opcode
-     *            The opcode to write into bytecode.
-     * @param owner
-     *            Fully qualified package name.
-     * @param name
-     *            Fully qualified method name
-     * @param desc
-     *            Method description
-     * @param itf
-     *            method access flag. Usually 0??? Not sure.
-     */
-    private void replaceMethodDescriptorMutation(int opcode, String owner, String name, String desc, boolean itf) {
-
     }
 
     @Override

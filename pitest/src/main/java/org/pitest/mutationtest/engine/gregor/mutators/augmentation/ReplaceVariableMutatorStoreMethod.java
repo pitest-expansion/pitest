@@ -66,9 +66,10 @@ class RandomVarReplacement1 extends MethodVisitor {
                 }
 
                 if (typeCount > 1) {
-                    while (!(varType.get(n).equals(varType.get(index))) && n == index) // if random selection is the
-                                                                                       // current variable OR selected
-                                                                                       // one does not match type
+                    while (!(varType.get(n).equals(varType.get(index))) && n == index)
+                    // if random selection is the
+                    // current variable OR selected
+                    // one does not match type
                     {
                         n = rand.nextInt(varIndex.size()) + 0; // select a new variable at random
                     }

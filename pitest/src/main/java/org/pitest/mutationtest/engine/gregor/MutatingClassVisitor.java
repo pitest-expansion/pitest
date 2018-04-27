@@ -39,7 +39,7 @@ public class MutatingClassVisitor extends ClassVisitor {
     private final Predicate<MethodInfo> filter;
     private final ClassContext context;
     private final Set<MethodMutatorFactory> methodMutators = new HashSet<>();
-    private final ClassByteArraySource byteSource;
+    private ClassByteArraySource byteSource;
 
     MutatingClassVisitor(final ClassVisitor delegateClassVisitor, final ClassContext context,
             final Predicate<MethodInfo> filter, final Collection<MethodMutatorFactory> mutators,
