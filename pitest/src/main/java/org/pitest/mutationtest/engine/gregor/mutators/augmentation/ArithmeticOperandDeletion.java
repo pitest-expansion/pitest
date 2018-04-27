@@ -79,8 +79,8 @@ public class ArithmeticOperandDeletion implements MethodMutatorFactory {
 class AODFirstMethodVisitor extends AbstractInsnMutator {
 
     AODFirstMethodVisitor(final MethodMutatorFactory factory, final MethodInfo methodInfo,
-            final MutationContext context, final MethodVisitor writer) {
-        super(factory, methodInfo, context, writer, null);
+            final MutationContext context, final MethodVisitor mv) {
+        super(factory, methodInfo, context, mv, null);
     }
 
     private static final Map<Integer, ZeroOperandMutation> MUTATIONS = new HashMap<Integer, ZeroOperandMutation>();

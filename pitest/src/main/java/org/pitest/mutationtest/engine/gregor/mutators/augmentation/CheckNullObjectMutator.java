@@ -6,8 +6,6 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-//import org.pitest.mutationtest.engine.gregor.AbstractInsnMutator;
-//import org.pitest.mutationtest.engine.gregor.InsnSubstitution;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
@@ -82,17 +80,36 @@ class CheckNullObjectVisitor extends MethodVisitor {
         if (opcode == Opcodes.GETFIELD) {
             muID = this.context.registerMutation(factory, "Checked for NULL object at GETFIELD.");
             if (this.context.shouldMutate(muID)) {
-                mutateGetField(opcode, owner, name, desc);
+                mutateGetFieldIFNONNULL(opcode, owner, name, desc);
             }
 
-        } else if (opcode == Opcodes.PUTFIELD) {
-            muID = this.context.registerMutation(factory, "Checked for NULL object at PUTFIELD.");
-            if (this.context.shouldMutate(muID)) {
-                mutatePutField(opcode, owner, name, desc);
-            }
+            // } else if (opcode == Opcodes.PUTFIELD) {
+            // muID = this.context.registerMutation(factory, "Checked for NULL object at
+            // PUTFIELD.");
+            // if (this.context.shouldMutate(muID)) {
+            // mutatePutField(opcode, owner, name, desc);
+            // }
         } else {
             super.visitFieldInsn(opcode, owner, name, desc);
         }
+    }
+
+    /**
+     * Come up with a default value of a certain type and push it onto the stack
+     */
+    public void pushDefaultValue(String desc) {
+        if (desc.equalsIgnoreCase("I")) {
+            super.visitInsn(Opcodes.ICONST_0);
+        } else if (desc.equalsIgnoreCase("D")) {
+            super.visitInsn(Opcodes.DCONST_0);
+        } else if (desc.equalsIgnoreCase("F")) {
+            super.visitInsn(Opcodes.FCONST_0);
+        } else if (desc.equalsIgnoreCase("L")) {
+            super.visitInsn(Opcodes.LCONST_0);
+        } else {
+            super.visitInsn(Opcodes.ACONST_NULL);
+        }
+
     }
 
     /**
@@ -104,7 +121,31 @@ class CheckNullObjectVisitor extends MethodVisitor {
      * @param name
      * @param desc
      */
-    public void mutateGetField(int opcode, String owner, String name, String desc) {
+    public void mutateGetFieldIFNONNULL(int opcode, String owner, String name, String desc) {
+        super.visitInsn(Opcodes.DUP);
+        Label ifNull = new Label();
+        Label ifNotNull = new Label();
+        Label returnToNormalCode = new Label();
+
+        // visit ifNull if object is null
+        super.visitJumpInsn(Opcodes.IFNONNULL, ifNotNull);
+
+        // this happens if object is null, pop the object ref and push a dummy value on to the stack
+        // instruction.
+        super.visitLabel(ifNull);
+        super.visitInsn(Opcodes.POP);
+        pushDefaultValue(desc);
+        super.visitJumpInsn(Opcodes.GOTO, returnToNormalCode);
+
+        // this happens if object is not null, execute the instruction.
+        super.visitLabel(ifNotNull);
+        super.visitFieldInsn(opcode, owner, name, desc);
+        super.visitJumpInsn(Opcodes.GOTO, returnToNormalCode);
+
+        super.visitLabel(returnToNormalCode);
+    }
+
+    public void mutateGetFieldEQUALNULL(int opcode, String owner, String name, String desc) {
         super.visitInsn(Opcodes.DUP);
         Label ifNull = new Label();
         Label ifNotNull = new Label();
@@ -117,7 +158,7 @@ class CheckNullObjectVisitor extends MethodVisitor {
         // instruction.
         super.visitLabel(ifNull);
         super.visitInsn(Opcodes.POP);
-        super.visitInsn(Opcodes.POP);
+        // super.visitInsn(Opcodes.POP);
         super.visitJumpInsn(Opcodes.GOTO, returnToNormalCode);
 
         // this happens if object is not null, execute the instruction.
@@ -129,7 +170,7 @@ class CheckNullObjectVisitor extends MethodVisitor {
     }
 
     /**
-     * 
+     * Mutate in the case of putfield
      * @param opcode
      * @param owner
      * @param name

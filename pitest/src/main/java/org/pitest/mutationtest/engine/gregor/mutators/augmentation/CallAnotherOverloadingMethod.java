@@ -19,6 +19,7 @@ import org.pitest.mutationtest.engine.gregor.AbstractJumpMutator;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
+import org.pitest.mutationtest.engine.gregor.ZeroOperandMutation;
 import org.pitest.mutationtest.engine.gregor.mutators.augmentation.ScanClassAdapter;
 
 import bsh.org.objectweb.asm.ClassVisitor;
@@ -31,7 +32,7 @@ public enum CallAnotherOverloadingMethod implements MethodMutatorFactory {
     @Override
     public MethodVisitor create(MutationContext context, MethodInfo methodInfo, MethodVisitor methodVisitor,
             ClassByteArraySource byteSource) {
-        return new ReplaceWithOverloadingMethod(this, context, methodVisitor, byteSource);
+        return new ReplaceWithOverloadingMethod(this, methodInfo, context, methodVisitor, byteSource);
     }
 
     @Override
@@ -57,9 +58,8 @@ class ReplaceWithOverloadingMethod extends AbstractInsnMutator {
         this.accessTypeList = accessTypeList;
     }
 
-    ReplaceWithOverloadingMethod(final MethodMutatorFactory factory, final MethodInfo methodInfo,
-            final MutationContext context, final MethodVisitor delegateMethodVisitor, ClassByteArraySource byteSource) {
-        super(Opcodes.ASM6, delegateMethodVisitor);
+    ReplaceWithOverloadingMethod(final MethodMutatorFactory factory, MethodInfo methodInfo, final MutationContext context, final MethodVisitor delegateMethodVisitor, ClassByteArraySource byteSource) {
+        super(factory, methodInfo, context, delegateMethodVisitor, null);
         this.factory = factory;
         this.context = context;
         this.byteSource = byteSource;
@@ -147,6 +147,12 @@ class ReplaceWithOverloadingMethod extends AbstractInsnMutator {
      */
     private void replaceMethodDescriptorMutation(int opcode, String owner, String name, String desc, boolean itf) {
 
+    }
+
+    @Override
+    protected Map<Integer, ZeroOperandMutation> getMutations() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

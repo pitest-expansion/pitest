@@ -58,12 +58,19 @@ import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncreme
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveSwitchMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.augmentation.CheckNullObjectMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.augmentation.ReplaceVariableMutatorStoreMethod;
 
 public final class Mutator {
 
     private static final Map<String, Iterable<MethodMutatorFactory>> MUTATORS = new LinkedHashMap<>();
 
     static {
+
+        /**
+         * Replace variable with local variables
+         */
+        add("REPLACE_WITH_LOCAL_VAR_ASTORE", ReplaceVariableMutatorStoreMethod.REPLACE_VARIABLE_MUTATOR_STORE_METHOD);
+        addGroup("REPLACE_WITH_LOCAL_VAR_ALL", replaceWithLocalVariable());
 
         /**
          * Default mutator that inverts the negation of integer and floating point
@@ -237,6 +244,10 @@ public final class Mutator {
         return fromStrings(MUTATORS.keySet());
     }
 
+    private static Collection<MethodMutatorFactory> replaceWithLocalVariable() {
+        return group(ReplaceVariableMutatorStoreMethod.REPLACE_VARIABLE_MUTATOR_STORE_METHOD);
+    }
+
     private static Collection<MethodMutatorFactory> stronger() {
         return combine(defaults(), group(new RemoveConditionalMutator(Choice.EQUAL, false), new SwitchMutator()));
     }
@@ -251,6 +262,7 @@ public final class Mutator {
     /**
      * Default set of mutators - designed to provide balance between strength and
      * performance
+     * 
      * @return a collection of mutations.
      */
     public static Collection<MethodMutatorFactory> defaults() {
@@ -265,6 +277,7 @@ public final class Mutator {
     /**
      * Proposed new defaults - replaced the RETURN_VALS mutator with the new more
      * stable set
+     * 
      * @return a collection of mutations.
      */
     public static Collection<MethodMutatorFactory> newDefaults() {
