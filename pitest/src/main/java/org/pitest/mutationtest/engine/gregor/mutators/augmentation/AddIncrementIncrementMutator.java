@@ -63,5 +63,4 @@ class AddIncrementIncrementMethodVisitor extends MethodVisitor {
       this.mv.visitIincInsn(var, increment);
     }
   }
-
 }
