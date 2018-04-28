@@ -229,13 +229,15 @@ class ReplaceWithOverloadingMethod extends AbstractInsnMutator {
 		return oldDesc.length() < newDesc.length();
 	}
 
+
 	/**
 	 * Pop parameters from the stack
 	 * 
 	 * @param param
 	 */
 	public void popValues(String param) {
-		if (param.equalsIgnoreCase("I") || param.equalsIgnoreCase("F")) {
+		if (param.equalsIgnoreCase("Z") || param.equalsIgnoreCase("C") || param.equalsIgnoreCase("B")
+				|| param.equalsIgnoreCase("S") || param.equalsIgnoreCase("I") || param.equalsIgnoreCase("F")) {
 			super.visitInsn(Opcodes.POP);
 		} else if (param.equalsIgnoreCase("D") || param.equalsIgnoreCase("J")) {
 			super.visitInsn(Opcodes.POP2);
@@ -248,7 +250,8 @@ class ReplaceWithOverloadingMethod extends AbstractInsnMutator {
 	 * Come up with a default value of a certain type and push it onto the stack
 	 */
 	public void pushValues(String param) {
-		if (param.equalsIgnoreCase("I")) {
+		if (param.equalsIgnoreCase("Z") || param.equalsIgnoreCase("C") || param.equalsIgnoreCase("B")
+				|| param.equalsIgnoreCase("S") || param.equalsIgnoreCase("I")) {
 			super.visitInsn(Opcodes.ICONST_0);
 		} else if (param.equalsIgnoreCase("D")) {
 			super.visitInsn(Opcodes.DCONST_0);
@@ -257,9 +260,11 @@ class ReplaceWithOverloadingMethod extends AbstractInsnMutator {
 		} else if (param.equalsIgnoreCase("J")) {
 			super.visitInsn(Opcodes.LCONST_0);
 		} else {
+			// objects or array types
 			super.visitInsn(Opcodes.ACONST_NULL);
 		}
 	}
+
 
 	/**
 	 * For this string: (III)D, return ")D". In ASM, this means get the return type

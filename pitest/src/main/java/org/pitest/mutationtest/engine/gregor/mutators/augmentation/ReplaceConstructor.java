@@ -1,10 +1,13 @@
 package org.pitest.mutationtest.engine.gregor.mutators.augmentation;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -17,6 +20,7 @@ import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
 import org.pitest.mutationtest.engine.gregor.ZeroOperandMutation;
+import org.pitest.sequence.Match;
 
 /**
  * Static class doesn't make sense except in Math class. So we can ignore
@@ -116,8 +120,6 @@ class ReplaceConstructor extends AbstractInsnMutator {
 			super.visitMethodInsn(opcode, owner, name, desc, itf);
 		}
 	}
-	
-	
 
 	/**
 	 * Use the ASM Scanner pattern to scan the bytesource for the same class
@@ -134,7 +136,8 @@ class ReplaceConstructor extends AbstractInsnMutator {
 		ClassReader cr = new ClassReader(bytes.get());
 
 		// implement scan in an MV inside CV here
-		ScanForOverloadingMethod cv = new ScanForOverloadingMethod(cw, name);
+		ScanForOverloadingConstructor cv = new ScanForOverloadingConstructor(cw, name);
+		cv.setConstructorToScan(name);
 		cv.setOldDescriptor(desc);
 		cr.accept(cv, 0);
 		descriptorList = cv.getMethodDescriptorList();
@@ -162,9 +165,9 @@ class ReplaceConstructor extends AbstractInsnMutator {
 
 			// pick a random constructor description here
 			int newDescIndex = pickRandomConstructor(desc);
-			String newDesc =descriptorList.get(newDescIndex);
+			String newDesc = descriptorList.get(newDescIndex);
 			int newAccess = accessTypeList.get(newDescIndex);
-			
+
 			// manipulate stack here
 			manipulateStack(desc, newDesc);
 			super.visitMethodInsn(opcode, owner, name, newDesc, itf);
@@ -172,26 +175,39 @@ class ReplaceConstructor extends AbstractInsnMutator {
 			super.visitMethodInsn(opcode, owner, name, desc, itf);
 		}
 	}
-	
-	
+
 	public void manipulateStack(String oldDesc, String newDesc) {
-		if(oldDesc.length()< newDesc.length()) {
+		if (oldDesc.length() < newDesc.length()) {
 			String paramListToPush = newDesc.substring(oldDesc.indexOf(")"), newDesc.indexOf(")"));
+			List<String> pushList = new ArrayList<String>();
+			int index=0;
+			while(index < paramListToPush.length()) {
+				Pattern oneWord = Pattern.compile("[ZCBSIF]");
+				Pattern twoWord = Pattern.compile("[JD]");
+				Pattern arrayPrimitiveType =Pattern.compile("\\[+[ZCBSIFJD]");
+				Pattern arrayObject =Pattern.compile("\\[+[L]");
+				 {
+					 char temp = paramListToPush.charAt(index);
+					 if(==)
+					
+				}
+			}
 			
-		}else {
-			
+		} else {
+			String paramListToPop = oldDesc.substring(newDesc.indexOf(")"), oldDesc.indexOf(")"));
+			List<String> popList = new ArrayList<String>();
 		}
-		
-		
+
 	}
-	
+
 	/**
 	 * Pop parameters from the stack
 	 * 
 	 * @param param
 	 */
 	public void popValues(String param) {
-		if (param.equalsIgnoreCase("I") || param.equalsIgnoreCase("F")) {
+		if (param.equalsIgnoreCase("Z") || param.equalsIgnoreCase("C") || param.equalsIgnoreCase("B")
+				|| param.equalsIgnoreCase("S") || param.equalsIgnoreCase("I") || param.equalsIgnoreCase("F")) {
 			super.visitInsn(Opcodes.POP);
 		} else if (param.equalsIgnoreCase("D") || param.equalsIgnoreCase("J")) {
 			super.visitInsn(Opcodes.POP2);
@@ -204,7 +220,8 @@ class ReplaceConstructor extends AbstractInsnMutator {
 	 * Come up with a default value of a certain type and push it onto the stack
 	 */
 	public void pushValues(String param) {
-		if (param.equalsIgnoreCase("I")) {
+		if (param.equalsIgnoreCase("Z") || param.equalsIgnoreCase("C") || param.equalsIgnoreCase("B")
+				|| param.equalsIgnoreCase("S") || param.equalsIgnoreCase("I")) {
 			super.visitInsn(Opcodes.ICONST_0);
 		} else if (param.equalsIgnoreCase("D")) {
 			super.visitInsn(Opcodes.DCONST_0);
@@ -213,10 +230,10 @@ class ReplaceConstructor extends AbstractInsnMutator {
 		} else if (param.equalsIgnoreCase("J")) {
 			super.visitInsn(Opcodes.LCONST_0);
 		} else {
+			// objects or array types
 			super.visitInsn(Opcodes.ACONST_NULL);
 		}
 	}
-	
 
 	/**
 	 * Pick a random method descriptor from the list

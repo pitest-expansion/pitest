@@ -16,12 +16,16 @@ import org.objectweb.asm.MethodVisitor;
  */
 public class ScanForOverloadingConstructor extends ClassVisitor {
 
-	private static String constructorToScan;
+	private String constructorToScan;
 
 	private List<String> descriptorList = new ArrayList<String>();
 	private List<Integer> accessTypeList = new ArrayList<Integer>();
 	private List<Boolean> staticAccessList = new ArrayList<Boolean>();
 	private String oldDescriptor;
+
+	public static void setConstructorToScan(String constructorToScan) {
+		ScanForOverloadingConstructor.constructorToScan = constructorToScan;
+	}
 
 	public void setOldDescriptor(String oldDescriptor) {
 		this.oldDescriptor = oldDescriptor;
