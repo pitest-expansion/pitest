@@ -54,12 +54,14 @@ import org.pitest.mutationtest.engine.gregor.mutators.augmentation.ArithmeticOpe
 import org.pitest.mutationtest.engine.gregor.mutators.augmentation.ArithmeticOperatorReplacementMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.augmentation.ReplaceWithOverloadingMethodMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.augmentation.RelationalOperatorReplacementMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.augmentation.ReplaceMethodNameMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiverMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveSwitchMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.augmentation.CheckNullObjectMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.augmentation.ReplaceVariableMutatorStoreMethod;
+import org.pitest.mutationtest.engine.gregor.mutators.augmentation.ReplaceConstructorMutator;
 
 public final class Mutator {
 
@@ -68,15 +70,29 @@ public final class Mutator {
     static {
 
         /**
-         * Replace methods with overloading methods
+         * Replace methods with overloading methods M2
          */
-        add("CALL_OVERLOADING_METHOD", ReplaceWithOverloadingMethodMutator.REPLACE_WITH_OVERLOADING_METHOD);
-        addGroup("CALL_OVERLOADING_METHOD", callOverloadingMethod());
+        add("M2_M", ReplaceWithOverloadingMethodMutator.REPLACE_WITH_OVERLOADING_METHOD);
+
         /**
-         * Replace variable with local variables
+         * Replace variable with local variables M4
          */
-        add("REPLACE_WITH_LOCAL_VAR_ASTORE", ReplaceVariableMutatorStoreMethod.REPLACE_VARIABLE_MUTATOR_STORE_METHOD);
-        addGroup("REPLACE_WITH_LOCAL_VAR_ALL", replaceWithLocalVariable());
+        add("M4", ReplaceVariableMutatorStoreMethod.REPLACE_VARIABLE_MUTATOR_STORE_METHOD);
+
+        /**
+         * Replace method name M3
+         */
+        add("M3", ReplaceMethodNameMutator.REPLACE_METHOD_NAME);
+
+        /**
+         * Replace constructor descriptor M2
+         */
+        add("M2_C", ReplaceConstructorMutator.REPLACE_CONSTRUCTOR_DESCRIPTOR);
+
+        /**
+         * Add object null check mutation  M1
+         */
+        add("M1", CheckNullObjectMutator.CHECK_NULL_OBJECT_MUTATOR);
 
         /**
          * Default mutator that inverts the negation of integer and floating point
@@ -239,23 +255,10 @@ public final class Mutator {
                 new ArithmeticOperandDeletion(ArithmeticOperandDeletion.MutantType.REMOVE_LAST_MUTATOR));
         addGroup("AOD", aod());
 
-        /*
-         * Add object null check mutation
-         */
-        add("NULL_CHECK", CheckNullObjectMutator.CHECK_NULL_OBJECT_MUTATOR);
-
     }
 
     public static Collection<MethodMutatorFactory> all() {
         return fromStrings(MUTATORS.keySet());
-    }
-
-    private static Collection<MethodMutatorFactory> callOverloadingMethod() {
-        return group(ReplaceWithOverloadingMethodMutator.REPLACE_WITH_OVERLOADING_METHOD);
-    }
-
-    private static Collection<MethodMutatorFactory> replaceWithLocalVariable() {
-        return group(ReplaceVariableMutatorStoreMethod.REPLACE_VARIABLE_MUTATOR_STORE_METHOD);
     }
 
     private static Collection<MethodMutatorFactory> stronger() {
@@ -279,9 +282,7 @@ public final class Mutator {
         return group(InvertNegsMutator.INVERT_NEGS_MUTATOR, ReturnValsMutator.RETURN_VALS_MUTATOR,
                 MathMutator.MATH_MUTATOR, VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR,
                 NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
-                ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
-                ArithmeticOperatorReplacementMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR,
-                IncrementsMutator.INCREMENTS_MUTATOR);
+                ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR, IncrementsMutator.INCREMENTS_MUTATOR);
     }
 
     /**
@@ -293,9 +294,8 @@ public final class Mutator {
     public static Collection<MethodMutatorFactory> newDefaults() {
         return combine(group(InvertNegsMutator.INVERT_NEGS_MUTATOR, MathMutator.MATH_MUTATOR,
                 VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR, NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR,
-                ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR,
-                ArithmeticOperatorReplacementMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR,
-                IncrementsMutator.INCREMENTS_MUTATOR), betterReturns());
+                ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR, IncrementsMutator.INCREMENTS_MUTATOR),
+                betterReturns());
     }
 
     public static Collection<MethodMutatorFactory> ror() {

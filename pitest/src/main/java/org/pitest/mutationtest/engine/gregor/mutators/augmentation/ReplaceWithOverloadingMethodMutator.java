@@ -108,20 +108,17 @@ class ReplaceWithOverloadingMethod extends AbstractInsnMutator {
 	 */
 	private void getOverloadingMethod(String owner, String name, String desc, boolean itf) {
 
-		ClassWriter cw = new ClassWriter(0);
+		//ClassWriter cw = new ClassWriter(0);
 		Optional<byte[]> bytes = this.returnByteArray();
 		ClassReader cr = new ClassReader(bytes.get());
 
 		// implement scan in an MV inside CV here
-		ScanForOverloadingMethod cv = new ScanForOverloadingMethod(cw, name);
+		ScanForOverloadingMethod cv = new ScanForOverloadingMethod(name);
 		cv.setOldDescriptor(desc);
 		cr.accept(cv, 0);
 		descriptorList = cv.getMethodDescriptorList();
 		accessTypeList = cv.getAccessTypeList();
 		staticTypeList = cv.getStaticAccessList();
-		LOGGER.log(Level.FINE, descriptorList.toString());
-		LOGGER.log(Level.FINE, accessTypeList.toString());
-		LOGGER.log(Level.FINE, staticTypeList.toString());
 	}
 
 	/**

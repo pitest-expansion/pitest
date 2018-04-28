@@ -27,8 +27,8 @@ public class ScanForOverloadingMethod extends ClassVisitor {
         this.oldDescriptor = oldDescriptor;
     }
 
-    public ScanForOverloadingMethod(ClassVisitor cv, String methodNameToScan) {
-        super(Opcodes.ASM6, cv);
+    public ScanForOverloadingMethod( String methodNameToScan) {
+        super(Opcodes.ASM6);
         this.methodNameToScan = methodNameToScan;
     }
 
@@ -53,21 +53,78 @@ public class ScanForOverloadingMethod extends ClassVisitor {
                 && descReturnType.equalsIgnoreCase(returnTypeToScan)) {
 
             // If one descriptor contains the other descriptor (has similar parameters
-            ArrayList<Character> oldArgs = new ArrayList<Character>();
-            ArrayList<Character> newArgs = new ArrayList<Character>();
+            ArrayList<String> oldArgs = new ArrayList<String>();
+            ArrayList<String> newArgs = new ArrayList<String>();
+            
             for (int i = 0; i < oldDescriptor.length(); i++) {
-                oldArgs.add(oldDescriptor.charAt(i));
+                if (oldDescriptor.charAt(i) == 'L') {
+                    String oldsub = oldDescriptor.substring(i);
+                    oldsub = oldsub.substring(0,oldsub.indexOf(";") + 1);
+                    oldArgs.add(oldsub);
+                    i += oldsub.length() - 1;
+                } else if (oldDescriptor.charAt(i) == '[') {
+                    String oldsub = "";
+                    int y = i;
+                    while (oldDescriptor.charAt(y) == '[') {
+                        oldsub += oldDescriptor.charAt(y);
+                        y++;
+                    }
+                    
+                    if (oldDescriptor.charAt(y) == 'L') {
+                        String oldsub2 = oldDescriptor.substring(y);
+                        oldsub2 = oldsub2.substring(0,oldsub2.indexOf(";") + 1);
+                        oldsub += oldsub2;
+                    } else {
+                        oldsub += oldDescriptor.charAt(y);
+                    }
+                    oldArgs.add(oldsub);
+                    i += oldsub.length() - 1;
+                } else {
+                    oldArgs.add(oldDescriptor.charAt(i) + "");
+                }
             }
-            oldArgs.remove(oldArgs.size() - 1);
-            oldArgs.remove(oldArgs.size() - 1);
-            oldArgs.remove(0);
+
+            if (oldArgs.size() >= 3) {
+                oldArgs.remove(oldArgs.size() - 1);
+                oldArgs.remove(oldArgs.size() - 1);
+                oldArgs.remove(0);
+            }
 
             for (int i = 0; i < desc.length(); i++) {
-                newArgs.add(desc.charAt(i));
+                char nextChar = desc.charAt(i);
+                if (nextChar == 'L') {
+                    String oldsub = desc.substring(i);
+                    oldsub = oldsub.substring(0 ,oldsub.indexOf(";") + 1);
+                    newArgs.add(oldsub);
+                    i += oldsub.length() - 1;
+                } else if (nextChar == '[') {
+                    String oldsub = "";
+                    int y = i;
+                    while (desc.charAt(y) == '[') {
+                        oldsub += desc.charAt(y);
+                        y++;
+                    }
+                    
+                    if (desc.charAt(y) == 'L') {
+                        String oldsub2 = desc.substring(y);
+                        oldsub2 = oldsub2.substring(0,oldsub2.indexOf(";") + 1);
+                        oldsub += oldsub2;
+                    } else {
+                        oldsub += desc.charAt(y);
+                    }
+                    newArgs.add(oldsub);
+                    i += oldsub.length() - 1;
+                } else {
+                    newArgs.add(desc.charAt(i) + "");
+                }
             }
-            newArgs.remove(newArgs.size() - 1);
-            newArgs.remove(newArgs.size() - 1);
-            newArgs.remove(0);
+
+            if (newArgs.size() >= 3) {
+                newArgs.remove(newArgs.size() - 1);
+                newArgs.remove(newArgs.size() - 1);
+                newArgs.remove(0);
+            }
+
             int minLength = Math.min(oldArgs.size(), newArgs.size());
             boolean sameArgs = true;
 
@@ -77,23 +134,9 @@ public class ScanForOverloadingMethod extends ClassVisitor {
                     break;
                 }
             }
-
-            if (sameArgs) {
-                // check method access: public, private or protected. Static method might cause
-                // a problem.
-                // Some method access is: ACC_PUBLIC + ACC_STATIC
-
-                methodDescriptorList.add(desc);
-                accessTypeList.add(access);
-                if (isStatic) {
-                    staticAccessList.add(true);
-                } else {
-                    staticAccessList.add(false);
-                }
-            }
         }
 
-        return visitMethod(access, name, desc, signature, exceptions);
+        return super.visitMethod(access, name, desc, signature, exceptions);
     }
 
     public List<String> getMethodDescriptorList() {
