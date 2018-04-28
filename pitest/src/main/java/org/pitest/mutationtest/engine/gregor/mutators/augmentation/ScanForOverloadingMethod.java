@@ -13,7 +13,7 @@ import org.objectweb.asm.MethodVisitor;
  * @author khoa
  *
  */
-public class ScanClassAdapter extends ClassVisitor {
+public class ScanForOverloadingMethod extends ClassVisitor {
 
     private static String methodNameToScan;
 
@@ -27,7 +27,7 @@ public class ScanClassAdapter extends ClassVisitor {
         this.oldDescriptor = oldDescriptor;
     }
 
-    public ScanClassAdapter(ClassVisitor cv, String methodNameToScan) {
+    public ScanForOverloadingMethod(ClassVisitor cv, String methodNameToScan) {
         super(Opcodes.ASM6, cv);
         this.methodNameToScan = methodNameToScan;
     }
