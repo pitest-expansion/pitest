@@ -52,6 +52,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.augmentation.AddIncrementIncrementMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.augmentation.ArithmeticOperandDeletion;
 import org.pitest.mutationtest.engine.gregor.mutators.augmentation.ArithmeticOperatorReplacementMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.augmentation.BitwiseOperatorMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.augmentation.RelationalOperatorReplacementMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiverMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
@@ -112,6 +113,13 @@ public final class Mutator {
     add("ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR",
         ArithmeticOperatorReplacementMutator.ARITHMETIC_OPERATOR_REPLACEMENT_MUTATOR);
 
+    /**
+     * Augmenting mutator that replaces a bitwise operator
+     * by each of the other ones.
+     */
+    add("BITWISE_OPERATOR_MUTATOR",
+       BitwiseOperatorMutator.BITWISE_OPERATOR_MUTATOR);
+    
     /**
      * Default mutator that mutates increments, decrements and assignment
      * increments and decrements of local variables.
