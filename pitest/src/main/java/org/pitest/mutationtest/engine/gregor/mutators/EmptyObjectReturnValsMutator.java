@@ -7,6 +7,7 @@ import java.util.Map;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.engine.gregor.AbstractInsnMutator;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
@@ -28,11 +29,11 @@ public enum EmptyObjectReturnValsMutator implements MethodMutatorFactory {
 
   @Override
   public MethodVisitor create(final MutationContext context,
-      final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
+      final MethodInfo methodInfo, final MethodVisitor methodVisitor, ClassByteArraySource byteSource) {
 
     if (!returnsBoolean(methodInfo)) {
       return new AReturnMethodVisitor(this, methodInfo, context,
-          methodVisitor);
+          methodVisitor, byteSource);
     } else {
       return methodVisitor;
     }
@@ -74,8 +75,8 @@ class AReturnMethodVisitor extends AbstractInsnMutator {
 
   AReturnMethodVisitor(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final MutationContext context,
-      final MethodVisitor writer) {
-    super(factory, methodInfo, context, writer);
+      final MethodVisitor writer, ClassByteArraySource byteSource) {
+    super(factory, methodInfo, context, writer, byteSource);
   }
 
   @Override

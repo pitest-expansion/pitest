@@ -18,8 +18,13 @@ import java.util.Map;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
+/**
+ * Further implements visitInsn function in ASM, similar to AbstractJumpMutator
+ *
+ */
 public abstract class AbstractInsnMutator extends MethodVisitor {
 
   private final MethodMutatorFactory factory;
@@ -28,7 +33,7 @@ public abstract class AbstractInsnMutator extends MethodVisitor {
 
   public AbstractInsnMutator(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final MutationContext context,
-      final MethodVisitor delegateMethodVisitor) {
+      final MethodVisitor delegateMethodVisitor, ClassByteArraySource byteSource) {
     super(Opcodes.ASM6, delegateMethodVisitor);
     this.factory = factory;
     this.methodInfo = methodInfo;

@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.mutationtest.engine.gregor.AbstractInsnMutator;
 import org.pitest.mutationtest.engine.gregor.InsnSubstitution;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
@@ -32,8 +33,8 @@ public enum InvertNegsMutator implements MethodMutatorFactory {
 
   @Override
   public MethodVisitor create(final MutationContext context,
-      final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    return new InvertNegsMethodVisitor(this, methodInfo, context, methodVisitor);
+      final MethodInfo methodInfo, final MethodVisitor methodVisitor, ClassByteArraySource byteSource) {
+    return new InvertNegsMethodVisitor(this, methodInfo, context, methodVisitor, byteSource);
   }
 
   @Override
@@ -62,8 +63,8 @@ class InvertNegsMethodVisitor extends AbstractInsnMutator {
 
   InvertNegsMethodVisitor(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final MutationContext context,
-      final MethodVisitor writer) {
-    super(factory, methodInfo, context, writer);
+      final MethodVisitor writer, ClassByteArraySource byteSource) {
+    super(factory, methodInfo, context, writer, byteSource);
   }
 
   @Override

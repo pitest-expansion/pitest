@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2010 Henry Coles
  *
@@ -15,6 +16,7 @@
 package org.pitest.mutationtest.engine.gregor;
 
 import org.objectweb.asm.MethodVisitor;
+import org.pitest.classinfo.ClassByteArraySource;
 
 /**
  * A <code>MethodMutatorFactory</code> is a factory creating method mutating
@@ -29,27 +31,41 @@ import org.objectweb.asm.MethodVisitor;
  * name will be used in the reports created to document and describe the
  * mutation(s) applied.
  * </p>
+ * 
+ * Also implement this interface and InsnSubstitution to replace bytecode on the
+ * spot.
  *
  * @author Henry Coles
  */
 public interface MethodMutatorFactory {
 
-  MethodVisitor create(MutationContext context,
-      MethodInfo methodInfo, MethodVisitor methodVisitor);
+    /**
+     * To be implemented in various mutators in their own package. Visit a method and create mutations. 
+     */
+    MethodVisitor create(MutationContext context, MethodInfo methodInfo, MethodVisitor methodVisitor, ClassByteArraySource byteSource);
 
-  String getGloballyUniqueId();
+    /**
+     * To be implemented in various mutators in their own packages, usually in the
+     * form Object.getClass().getName(). It seems that this method is used to get
+     * the fully qualified classname of an object.
+     * 
+     * This is already implemented in Object class. I wonder why this is in the
+     * interface.
+     * 
+     * @return a fully qualified class name of the mutator (I hope I got this right)
+     */
+    String getGloballyUniqueId();
 
-  /**
-   * Returns a human readable <code>String</code> representation of this
-   * <code>MethodMutatorFactory</code>. The return value of this method will be
-   * used in reports to document and describe the mutation(s) applied by the
-   * <code>MethodVisitor</code> created by this
-   * <code>MethodMutatorFactory</code>.
-   *
-   *
-   * @return a human readable string representation for end-user report
-   *         generation.
-   */
-  String getName();
+    /**
+     * Returns a human readable <code>String</code> representation of this
+     * <code>MethodMutatorFactory</code>. The return value of this method will be
+     * used in reports to document and describe the mutation(s) applied by the
+     * <code>MethodVisitor</code> created by this <code>MethodMutatorFactory</code>.
+     *
+     *
+     * @return a human readable string representation for end-user report
+     *         generation.
+     */
+    String getName();
 
 }

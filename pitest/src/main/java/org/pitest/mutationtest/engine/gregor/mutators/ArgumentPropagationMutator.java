@@ -16,6 +16,7 @@
 package org.pitest.mutationtest.engine.gregor.mutators;
 
 import org.objectweb.asm.MethodVisitor;
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
@@ -51,8 +52,8 @@ public enum ArgumentPropagationMutator implements MethodMutatorFactory {
 
   @Override
   public MethodVisitor create(final MutationContext context,
-      final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
-    return new ArgumentPropagationVisitor(context, methodVisitor, this);
+      final MethodInfo methodInfo, final MethodVisitor methodVisitor, ClassByteArraySource byteSource) {
+    return new ArgumentPropagationVisitor(context, methodVisitor, this, byteSource);
   }
 
   @Override

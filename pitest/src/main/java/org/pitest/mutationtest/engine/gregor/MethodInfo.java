@@ -17,6 +17,10 @@ package org.pitest.mutationtest.engine.gregor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
+/**
+ * Extract different parts of a method.
+ *
+ */
 public class MethodInfo {
 
   private final ClassInfo owningClass;
@@ -54,26 +58,51 @@ public class MethodInfo {
         + this.methodDescriptor + ",  name=" + this.methodName + "]";
   }
 
+  /**
+   * Check if this method is static
+   * @return is this method static?
+   */
   public boolean isStatic() {
     return ((this.access & Opcodes.ACC_STATIC) != 0);
   }
 
+  /**
+   * Check this method is synthetic
+   * @return is it synthetic?
+   */
   public boolean isSynthetic() {
     return ((this.access & Opcodes.ACC_SYNTHETIC) != 0);
   }
 
+  /**
+   * Check if this method is a constructor.
+   * @return is this a constructor?
+   */
   public boolean isConstructor() {
     return isConstructor(this.methodName);
   }
-
+  /**
+   * Check if this method contains  init  in the class file (constructor)
+   * @param methodName method name
+   * @return is this a constructor?
+   */
   public static boolean isConstructor(final String methodName) {
     return "<init>".equals(methodName);
   }
 
+  /**
+   * Use ASM getReturnType function to get the return type.
+   * @return return type
+   */
   public Type getReturnType() {
     return Type.getReturnType(this.methodDescriptor);
   }
 
+  /**
+   * Check if a method returns void using ASM Type.VOID_TYPE
+   * @param desc method name?
+   * @return a method is void or not.
+   */
   public static boolean isVoid(final String desc) {
     return Type.getReturnType(desc).equals(Type.VOID_TYPE);
   }
