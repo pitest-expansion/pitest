@@ -35,7 +35,7 @@ public enum VoidMethodCallMutator implements MethodMutatorFactory {
   public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor, ClassByteArraySource byteSource) {
     return new MethodCallMethodVisitor(methodInfo, context, methodVisitor,
-        this, voidMethods());
+        this, voidMethods(), byteSource);
   }
 
   @Override

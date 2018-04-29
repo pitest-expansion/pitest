@@ -32,7 +32,7 @@ public enum PrimitiveReturnsMutator implements MethodMutatorFactory {
 
     if (!returnsBoolean(methodInfo)) {
       return new PrimitivesReturnValsMethodVisitor(this, methodInfo, context,
-          methodVisitor);
+          methodVisitor, byteSource);
     } else {
       return methodVisitor;
     }
@@ -60,8 +60,8 @@ class PrimitivesReturnValsMethodVisitor extends AbstractInsnMutator {
 
   PrimitivesReturnValsMethodVisitor(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final MutationContext context,
-      final MethodVisitor writer) {
-    super(factory, methodInfo, context, writer, null);
+      final MethodVisitor writer, ClassByteArraySource byteSource) {
+    super(factory, methodInfo, context, writer, byteSource);
   }
 
   private static final Map<Integer, ZeroOperandMutation> MUTATIONS = new HashMap<>();

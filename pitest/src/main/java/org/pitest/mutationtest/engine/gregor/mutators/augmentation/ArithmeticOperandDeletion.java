@@ -53,9 +53,9 @@ public class ArithmeticOperandDeletion implements MethodMutatorFactory {
     public MethodVisitor create(final MutationContext context, final MethodInfo methodInfo,
             final MethodVisitor methodVisitor, ClassByteArraySource byteSource) {
         if (this.mutatorType == ArithmeticOperandDeletion.MutantType.REMOVE_FIRST_MUTATOR) {
-            return new AODFirstMethodVisitor(this, methodInfo, context, methodVisitor);
+            return new AODFirstMethodVisitor(this, methodInfo, context, methodVisitor, byteSource);
         } else if (this.mutatorType == ArithmeticOperandDeletion.MutantType.REMOVE_LAST_MUTATOR) {
-            return new AODLastMethodVisitor(this, context, methodVisitor);
+            return new AODLastMethodVisitor(this, context, methodVisitor, byteSource);
         } else {
             return null;
         }
@@ -79,8 +79,8 @@ public class ArithmeticOperandDeletion implements MethodMutatorFactory {
 class AODFirstMethodVisitor extends AbstractInsnMutator {
 
     AODFirstMethodVisitor(final MethodMutatorFactory factory, final MethodInfo methodInfo,
-            final MutationContext context, final MethodVisitor mv) {
-        super(factory, methodInfo, context, mv, null);
+            final MutationContext context, final MethodVisitor mv, ClassByteArraySource byteSource) {
+        super(factory, methodInfo, context, mv, byteSource);
     }
 
     private static final Map<Integer, ZeroOperandMutation> MUTATIONS = new HashMap<Integer, ZeroOperandMutation>();
@@ -145,7 +145,7 @@ class AODLastMethodVisitor extends MethodVisitor {
     private final MutationContext context;
 
     AODLastMethodVisitor(final MethodMutatorFactory factory, final MutationContext context,
-            final MethodVisitor methodVisitor) {
+            final MethodVisitor methodVisitor, ClassByteArraySource byteSource) {
         super(Opcodes.ASM6, methodVisitor);
         this.factory = factory;
         this.context = context;

@@ -28,6 +28,7 @@ import java.util.Arrays;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
@@ -38,7 +39,7 @@ class ArgumentPropagationVisitor extends MethodVisitor {
   private final MutationContext      context;
 
   ArgumentPropagationVisitor(final MutationContext context,
-      final MethodVisitor writer, final MethodMutatorFactory factory) {
+      final MethodVisitor writer, final MethodMutatorFactory factory, ClassByteArraySource byteSource) {
     super(Opcodes.ASM6, writer);
     this.factory = factory;
     this.context = context;

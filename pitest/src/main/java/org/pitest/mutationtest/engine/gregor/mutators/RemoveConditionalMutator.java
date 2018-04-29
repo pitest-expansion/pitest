@@ -56,7 +56,7 @@ public class RemoveConditionalMutator implements MethodMutatorFactory {
       final MethodInfo methodInfo, final MethodVisitor methodVisitor, ClassByteArraySource byteSource) {
     return new RemoveConditionalMethodVisitor(this, context, methodVisitor,
         "removed conditional - replaced " + this.kind.description()
-            + " check with " + this.replaceWith);
+            + " check with " + this.replaceWith, byteSource);
   }
 
   @Override
@@ -79,7 +79,7 @@ public class RemoveConditionalMutator implements MethodMutatorFactory {
 
     RemoveConditionalMethodVisitor(final MethodMutatorFactory factory,
         final MutationContext context,
-        final MethodVisitor delegateMethodVisitor, String description) {
+        final MethodVisitor delegateMethodVisitor, String description, ClassByteArraySource byteSource) {
       super(Opcodes.ASM6, delegateMethodVisitor);
       this.context = context;
       this.factory = factory;

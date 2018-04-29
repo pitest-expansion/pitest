@@ -52,27 +52,43 @@ class RandomVarReplacement1 extends MethodVisitor {
     public void visitVarInsn(final int opcode, final int var) {
         if (opcode == Opcodes.ILOAD || opcode == Opcodes.LLOAD || opcode == Opcodes.FLOAD || opcode == Opcodes.DLOAD
                 || opcode == Opcodes.ALOAD) { // if load detected and a replacment for this variable has been chosen
-            if (varIndex.contains(var)) {
-                int index = varIndex.indexOf(var); // get index of the variable in our saved variable list
+            if (!(varIndex.contains(var))) {
+                varIndex.add(var);
+                switch (opcode) {
+                case Opcodes.ILOAD:
+                    varType.add("Integer");
+                    break;
+                case Opcodes.DLOAD:
+                    varType.add("Double");
+                    break;
+                case Opcodes.FLOAD:
+                    varType.add("Float");
+                    break;
+                case Opcodes.LLOAD:
+                    varType.add("Long");
+                    break;
+                case Opcodes.ALOAD:
+                    varType.add("Object");
+                    break;
+                }
+            }
 
+            int index = varIndex.indexOf(var); // get index of the variable in our saved variable list
+            int typeCount = 0;
+            for (int i = 0; i < varType.size(); i++) {
+                if (varType.get(i).equals(varType.get(index))) {
+                    typeCount++;
+                }
+            }
+
+            if (typeCount > 1) {
                 Random rand = new Random();
                 n = rand.nextInt(varIndex.size()) + 0; // generate random index for replacment of variable
 
-                int typeCount = 0;
-                for (int i = 0; i < varType.size(); i++) {
-                    if (varType.get(i).equals(varType.get(index))) {
-                        typeCount++;
-                    }
-                }
-
-                if (typeCount > 1) {
-                    while (!(varType.get(n).equals(varType.get(index))) && n == index)
-                    // if random selection is the
-                    // current variable OR selected
-                    // one does not match type
-                    {
-                        n = rand.nextInt(varIndex.size()) + 0; // select a new variable at random
-                    }
+                while (!(varType.get(n).equals(varType.get(index))) || n == index) { // if random selection is the
+                                                                                     // current variable OR selected one
+                                                                                     // does not match type
+                    n = rand.nextInt(varIndex.size()) + 0; // select a new variable at random
                 }
 
                 final MutationIdentifier newId = this.context.registerMutation(this.factory,
@@ -85,6 +101,7 @@ class RandomVarReplacement1 extends MethodVisitor {
                     super.visitVarInsn(opcode, var);
                 }
             } else {
+
                 super.visitVarInsn(opcode, var);
             }
         } else if (opcode == Opcodes.ISTORE || opcode == Opcodes.LSTORE || opcode == Opcodes.FSTORE

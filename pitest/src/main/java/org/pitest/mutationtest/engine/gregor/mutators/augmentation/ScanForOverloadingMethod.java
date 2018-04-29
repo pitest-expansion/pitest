@@ -18,9 +18,9 @@ public class ScanForOverloadingMethod extends ClassVisitor {
     private static String methodNameToScan;
 
     private String returnTypeToScan = methodNameToScan.substring(methodNameToScan.indexOf(")"));
-    private List<String> methodDescriptorList = new ArrayList<String>();
-    private List<Integer> accessTypeList = new ArrayList<Integer>();
-    private List<Boolean> staticAccessList = new ArrayList<Boolean>();
+    private ArrayList<String> methodDescriptorList = new ArrayList<String>();
+    private ArrayList<Integer> accessTypeList = new ArrayList<Integer>();
+    private ArrayList<Boolean> staticAccessList = new ArrayList<Boolean>();
     private String oldDescriptor;
 
     public void setOldDescriptor(String oldDescriptor) {

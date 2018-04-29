@@ -24,7 +24,7 @@ public class NullMutateEverything implements MethodMutatorFactory {
   @Override
   public MethodVisitor create(MutationContext context, MethodInfo methodInfo,
       MethodVisitor methodVisitor, ClassByteArraySource byteSource) {
-    return new MutateEveryThing(this, context, methodVisitor);
+    return new MutateEveryThing(this, context, methodVisitor, byteSource);
   }
 
   @Override
@@ -49,7 +49,7 @@ class MutateEveryThing extends MethodVisitor {
 
   MutateEveryThing(final MethodMutatorFactory factory,
       final MutationContext context,
-      final MethodVisitor delegateMethodVisitor) {
+      final MethodVisitor delegateMethodVisitor, ClassByteArraySource byteSource) {
     super(Opcodes.ASM6, delegateMethodVisitor);
     this.factory = factory;
     this.context = context;

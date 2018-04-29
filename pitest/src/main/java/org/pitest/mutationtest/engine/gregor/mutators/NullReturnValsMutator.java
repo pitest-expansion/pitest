@@ -32,7 +32,7 @@ public enum NullReturnValsMutator implements MethodMutatorFactory {
 
     if (!moreStableMutationExits(methodInfo)) {
       return new NullReturnMethodVisitor(this, methodInfo, context,
-          methodVisitor);
+          methodVisitor, byteSource);
     } else {
       return methodVisitor;
     }
@@ -63,8 +63,8 @@ class NullReturnMethodVisitor extends AbstractInsnMutator {
 
   NullReturnMethodVisitor(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final MutationContext context,
-      final MethodVisitor writer) {
-    super(factory, methodInfo, context, writer, null);
+      final MethodVisitor writer, ClassByteArraySource byteSource) {
+    super(factory, methodInfo, context, writer, byteSource);
   }
 
   @Override

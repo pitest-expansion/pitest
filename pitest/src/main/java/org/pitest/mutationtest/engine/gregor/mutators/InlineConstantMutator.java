@@ -38,7 +38,7 @@ public class InlineConstantMutator implements MethodMutatorFactory {
     private final MutationContext context;
 
     InlineConstantVisitor(final MutationContext context,
-        final MethodVisitor delegateVisitor) {
+        final MethodVisitor delegateVisitor, ClassByteArraySource byteSource) {
       super(Opcodes.ASM6, delegateVisitor);
       this.context = context;
     }
@@ -288,7 +288,7 @@ public class InlineConstantMutator implements MethodMutatorFactory {
   @Override
   public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor, ClassByteArraySource byteSource) {
-    return new InlineConstantVisitor(context, methodVisitor);
+    return new InlineConstantVisitor(context, methodVisitor, byteSource);
   }
 
   @Override

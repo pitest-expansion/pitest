@@ -33,7 +33,7 @@ public enum EmptyObjectReturnValsMutator implements MethodMutatorFactory {
 
     if (!returnsBoolean(methodInfo)) {
       return new AReturnMethodVisitor(this, methodInfo, context,
-          methodVisitor);
+          methodVisitor, byteSource);
     } else {
       return methodVisitor;
     }
@@ -75,8 +75,8 @@ class AReturnMethodVisitor extends AbstractInsnMutator {
 
   AReturnMethodVisitor(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final MutationContext context,
-      final MethodVisitor writer) {
-    super(factory, methodInfo, context, writer, null);
+      final MethodVisitor writer, ClassByteArraySource byteSource) {
+    super(factory, methodInfo, context, writer, byteSource);
   }
 
   @Override

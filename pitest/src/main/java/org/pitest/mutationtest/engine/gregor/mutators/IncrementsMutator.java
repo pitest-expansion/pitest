@@ -29,7 +29,7 @@ public enum IncrementsMutator implements MethodMutatorFactory {
   @Override
   public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor, ClassByteArraySource byteSource) {
-    return new IncrementsMethodVisitor(this, context, methodVisitor);
+    return new IncrementsMethodVisitor(this, context, methodVisitor, byteSource);
   }
 
   @Override
@@ -49,7 +49,7 @@ class IncrementsMethodVisitor extends MethodVisitor {
   private final MutationContext      context;
 
   IncrementsMethodVisitor(final MethodMutatorFactory factory,
-      final MutationContext context, final MethodVisitor delegateMethodVisitor) {
+      final MutationContext context, final MethodVisitor delegateMethodVisitor, ClassByteArraySource byteSource) {
     super(Opcodes.ASM6, delegateMethodVisitor);
     this.factory = factory;
     this.context = context;

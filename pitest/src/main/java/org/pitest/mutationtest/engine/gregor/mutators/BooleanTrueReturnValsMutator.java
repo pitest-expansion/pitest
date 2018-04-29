@@ -29,7 +29,7 @@ public enum BooleanTrueReturnValsMutator implements MethodMutatorFactory {
     if ((returnType.getSort() == Type.BOOLEAN)
      || returnType.getClassName().equals("java.lang.Boolean")) {
       return new BooleanTrueMethodVisitor(this, methodInfo, context,
-          methodVisitor);
+          methodVisitor, byteSource);
     }
 
     return methodVisitor;
@@ -52,8 +52,8 @@ class BooleanTrueMethodVisitor extends AbstractInsnMutator {
 
   BooleanTrueMethodVisitor(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final MutationContext context,
-      final MethodVisitor writer) {
-    super(factory, methodInfo, context, writer, null);
+      final MethodVisitor writer, ClassByteArraySource byteSource) {
+    super(factory, methodInfo, context, writer, byteSource);
   }
 
   private static final Map<Integer, ZeroOperandMutation> MUTATIONS = new HashMap<>();

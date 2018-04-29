@@ -33,7 +33,7 @@ public class UnviableClassMutator implements MethodMutatorFactory {
   public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor, ClassByteArraySource byteSource) {
     return new UnviableClassMethodVisitor(this, methodInfo, context,
-        methodVisitor);
+        methodVisitor, byteSource);
   }
 
   @Override
@@ -52,8 +52,8 @@ class UnviableClassMethodVisitor extends AbstractInsnMutator {
 
   UnviableClassMethodVisitor(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final MutationContext context,
-      final MethodVisitor writer) {
-    super(factory, methodInfo, context, writer, null);
+      final MethodVisitor writer, ClassByteArraySource byteSource) {
+    super(factory, methodInfo, context, writer, byteSource);
   }
 
   @Override

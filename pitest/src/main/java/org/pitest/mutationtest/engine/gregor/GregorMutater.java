@@ -57,6 +57,7 @@ public class GregorMutater implements Mutater {
 
     public GregorMutater(final ClassByteArraySource byteSource, final Predicate<MethodInfo> filter,
             final Collection<MethodMutatorFactory> mutators) {
+        System.out.println(byteSource.toString());
         this.filter = filter;
         this.mutators.addAll(mutators);
         this.byteSource = byteSource;

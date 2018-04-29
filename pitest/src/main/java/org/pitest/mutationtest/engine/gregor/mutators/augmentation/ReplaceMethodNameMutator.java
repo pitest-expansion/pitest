@@ -25,7 +25,6 @@ public enum ReplaceMethodNameMutator implements MethodMutatorFactory {
     @Override
     public MethodVisitor create(MutationContext context, MethodInfo methodInfo, MethodVisitor methodVisitor,
             ClassByteArraySource byteSource) {
-
         return new ReplaceMethodName(this, methodInfo, context, methodVisitor, byteSource);
     }
 
@@ -36,33 +35,25 @@ public enum ReplaceMethodNameMutator implements MethodMutatorFactory {
 
     @Override
     public String getName() {
-        return "Replaced method " + name() + "with another method name." ;
+        return "Replaced method " + name() + "with another method name.";
     }
 
 }
 
-class ReplaceMethodName extends AbstractInsnMutator {
+class ReplaceMethodName extends MethodVisitor {
     private final MethodMutatorFactory factory;
     private final MutationContext context;
     private ClassByteArraySource byteSource;
     private int accessType;
-
-    private List<String> descriptorList;
-    private List<Integer> accessTypeList;
-    private List<String> methodNameList;
+    private ArrayList<String> methodNameList;
 
     ReplaceMethodName(final MethodMutatorFactory factory, MethodInfo methodInfo, final MutationContext context,
             final MethodVisitor delegateMethodVisitor, ClassByteArraySource byteSource) {
-        super(factory, methodInfo, context, delegateMethodVisitor, null);
+        super(Opcodes.ASM6, delegateMethodVisitor);
         this.factory = factory;
         this.context = context;
         this.byteSource = byteSource;
-    }
-
-    @Override
-    protected Map<Integer, ZeroOperandMutation> getMutations() {
-        // TODO Auto-generated method stub
-        return null;
+ 
     }
 
     /**
@@ -77,17 +68,6 @@ class ReplaceMethodName extends AbstractInsnMutator {
     }
 
     /**
-     * This uses getBytes method of ResourceFolderByteArraySource. It uses a
-     * className to get the byte[] for a given class.
-     * 
-     * @return An Option<byte[]> that contains information about this class. Now how
-     *         to use it?
-     */
-    private Optional<byte[]> returnByteArray() {
-        return byteSource.getBytes(this.context.getClassInfo().getName());
-    }
-
-    /**
      * Only check for INVOKESPECIAL (constructor invocation)
      */
     @Override
@@ -96,16 +76,14 @@ class ReplaceMethodName extends AbstractInsnMutator {
         // Only normal invoke
 
         if (opcode == Opcodes.INVOKEVIRTUAL || opcode == Opcodes.INVOKESTATIC) {
-            this.getOverloadingConstructor(opcode, owner, name, desc, itf);
+            this.scanMethodName(opcode, owner, name, desc, itf);
+            String newName = this.getRandomMethodName(opcode, owner, name, desc, itf);
 
             final MutationIdentifier muID = this.context.registerMutation(factory,
                     "Replaced" + name + " with overloading constructor here.");
 
             if (this.context.shouldMutate(muID)) {
-
-                this.replaceConstructor(opcode, owner, name, desc, itf);
-
-                // visitMethodInsn is called inside replaceMethodDescriptorMutation
+                super.visitMethodInsn(opcode, owner, newName, desc, itf);
             }
         } else {
             super.visitMethodInsn(opcode, owner, name, desc, itf);
@@ -116,35 +94,43 @@ class ReplaceMethodName extends AbstractInsnMutator {
      * Use the ASM Scanner pattern to scan the bytesource for the same class
      * 
      * @param opcode
-     *            TODO
      * @param owner
      * @param name
      * @param desc
      * @param itf
      */
-    private void getOverloadingConstructor(int opcode, String owner, String name, String desc, boolean itf) {
+    private void scanMethodName(int opcode, String owner, String name, String desc, boolean itf) {
+        // implement scan in an MV inside CV here
 
-        ClassWriter cw = new ClassWriter(0);
-        
         Optional<byte[]> bytes = this.returnByteArray();
         ClassReader cr = new ClassReader(bytes.get());
-
-        // implement scan in an MV inside CV here
-        ScanForMethodName cv = new ScanForMethodName(cw, name);
+        ScanForMethodName cv = new ScanForMethodName(name);
         cv.setMethodNameToScan(name);
         cv.setOldDescriptor(desc);
-        
+
         if (opcode == Opcodes.INVOKESTATIC) {
+            System.out.println(bytes.get());
             cv.setAccessTypeToScan(Opcodes.ACC_STATIC + Opcodes.ACC_PUBLIC);
+            System.out.println(bytes.get());
         } else {
             cv.setAccessTypeToScan(Opcodes.ACC_PUBLIC);
+            System.out.println(bytes.get());
         }
-
+        System.out.println(bytes.get());
         cr.accept(cv, 0);
-        descriptorList = cv.getMethodDescriptorList();
-        accessTypeList = cv.getAccessTypeList();
         methodNameList = cv.getMethodNameList();
 
+    }
+
+    /**
+     * This uses getBytes method of ResourceFolderByteArraySource. It uses a
+     * className to get the byte[] for a given class.
+     * 
+     * @return An Option<byte[]> that contains information about this class. Now how
+     *         to use it?
+     */
+    private Optional<byte[]> returnByteArray() {
+        return byteSource.getBytes(this.context.getClassInfo().getName());
     }
 
     /**
@@ -162,68 +148,31 @@ class ReplaceMethodName extends AbstractInsnMutator {
      * @param itf
      *            method access flag. Usually 0??? Not sure.
      */
-    private void replaceConstructor(int opcode, String owner, String name, String desc, boolean itf) {
-        if (descriptorList.size() > 1) {
-            Random rand = new Random();
+    private String getRandomMethodName(int opcode, String owner, String name, String desc, boolean itf) {
+        if (methodNameList.size() > 1) {
 
             // pick a random constructor description here
-            int newNameIndex = pickRandomMethodName(desc);
-            String newName = descriptorList.get(newNameIndex);
-            //int newAccess = accessTypeList.get(newNameIndex);
+            int newNameIndex = pickRandomMethodName(name);
+            return methodNameList.get(newNameIndex);
+            // int newAccess = accessTypeList.get(newNameIndex);
 
-            super.visitMethodInsn(opcode, owner, newName, desc, itf);
         } else {
-            super.visitMethodInsn(opcode, owner, name, desc, itf);
+            return name;
         }
     }
 
     /**
-     * Pop parameters from the stack
+     * Pick a random index from the list
      * 
-     * @param param
-     */
-    public void popValues(String param) {
-        if (param.equalsIgnoreCase("Z") || param.equalsIgnoreCase("C") || param.equalsIgnoreCase("B")
-                || param.equalsIgnoreCase("S") || param.equalsIgnoreCase("I") || param.equalsIgnoreCase("F")) {
-            super.visitInsn(Opcodes.POP);
-        } else if (param.equalsIgnoreCase("D") || param.equalsIgnoreCase("J")) {
-            super.visitInsn(Opcodes.POP2);
-        } else {
-            super.visitInsn(Opcodes.POP);
-        }
-    }
-
-    /**
-     * Come up with a default value of a certain type and push it onto the stack
-     */
-    public void pushValues(String param) {
-        if (param.equalsIgnoreCase("Z") || param.equalsIgnoreCase("C") || param.equalsIgnoreCase("B")
-                || param.equalsIgnoreCase("S") || param.equalsIgnoreCase("I")) {
-            super.visitInsn(Opcodes.ICONST_0);
-        } else if (param.equalsIgnoreCase("D")) {
-            super.visitInsn(Opcodes.DCONST_0);
-        } else if (param.equalsIgnoreCase("F")) {
-            super.visitInsn(Opcodes.FCONST_0);
-        } else if (param.equalsIgnoreCase("J")) {
-            super.visitInsn(Opcodes.LCONST_0);
-        } else {
-            // objects or array types
-            super.visitInsn(Opcodes.ACONST_NULL);
-        }
-    }
-
-    /**
-     * Pick a random method descriptor from the list
-     * 
-     * @param oldDesc
+     * @param oldName
      * @return
      */
-    public int pickRandomMethodName(String oldDesc) {
+    public int pickRandomMethodName(String oldName) {
         Random rand = new Random();
         // pick a random constructor description here
         while (true) {
-            int n = rand.nextInt(descriptorList.size());
-            if (!oldDesc.equalsIgnoreCase(descriptorList.get(n))) {
+            int n = rand.nextInt(methodNameList.size());
+            if (!oldName.equalsIgnoreCase(methodNameList.get(n))) {
                 return n;
 
             }

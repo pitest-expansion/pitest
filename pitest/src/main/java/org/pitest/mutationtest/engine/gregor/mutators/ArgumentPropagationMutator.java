@@ -53,7 +53,7 @@ public enum ArgumentPropagationMutator implements MethodMutatorFactory {
   @Override
   public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor, ClassByteArraySource byteSource) {
-    return new ArgumentPropagationVisitor(context, methodVisitor, this);
+    return new ArgumentPropagationVisitor(context, methodVisitor, this, byteSource);
   }
 
   @Override

@@ -36,7 +36,7 @@ public enum CheckNullObjectMutator implements MethodMutatorFactory {
     @Override
     public MethodVisitor create(final MutationContext context, final MethodInfo methodInfo, final MethodVisitor mv,
             ClassByteArraySource byteSource) {
-        return new CheckNullObjectVisitor(this, context, mv);
+        return new CheckNullObjectVisitor(this, context, mv, byteSource);
     }
 
     @Override
@@ -65,7 +65,7 @@ class CheckNullObjectVisitor extends MethodVisitor {
     Label exit = new Label();
 
     CheckNullObjectVisitor(final MethodMutatorFactory factory, final MutationContext context,
-            final MethodVisitor delegateMethodVisitor) {
+            final MethodVisitor delegateMethodVisitor, ClassByteArraySource byteSource) {
         super(Opcodes.ASM6, delegateMethodVisitor);
         this.factory = factory;
         this.context = context;

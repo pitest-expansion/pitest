@@ -34,7 +34,7 @@ public enum InvertNegsMutator implements MethodMutatorFactory {
   @Override
   public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor, ClassByteArraySource byteSource) {
-    return new InvertNegsMethodVisitor(this, methodInfo, context, methodVisitor);
+    return new InvertNegsMethodVisitor(this, methodInfo, context, methodVisitor, byteSource);
   }
 
   @Override
@@ -63,8 +63,8 @@ class InvertNegsMethodVisitor extends AbstractInsnMutator {
 
   InvertNegsMethodVisitor(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final MutationContext context,
-      final MethodVisitor writer) {
-    super(factory, methodInfo, context, writer, null);
+      final MethodVisitor writer, ClassByteArraySource byteSource) {
+    super(factory, methodInfo, context, writer, byteSource);
   }
 
   @Override

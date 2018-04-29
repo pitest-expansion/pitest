@@ -60,7 +60,7 @@ public class ScanForOverloadingConstructor extends ClassVisitor {
             descriptorList.add(desc);
             accessTypeList.add(access);
         }
-        return visitMethod(access, name, desc, signature, exceptions);
+        return super.visitMethod(access, name, desc, signature, exceptions);
     }
 
     public boolean oldConstainsNew(String oldDesc, String newDesc) {

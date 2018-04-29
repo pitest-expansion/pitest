@@ -32,7 +32,7 @@ public enum NegateConditionalsMutator implements MethodMutatorFactory {
   @Override
   public MethodVisitor create(final MutationContext context,
       final MethodInfo methodInfo, final MethodVisitor methodVisitor, ClassByteArraySource byteSource) {
-    return new ConditionalMethodVisitor(this, context, methodVisitor);
+    return new ConditionalMethodVisitor(this, context, methodVisitor, byteSource);
   }
 
   @Override
@@ -82,7 +82,7 @@ class ConditionalMethodVisitor extends AbstractJumpMutator {
   }
 
   ConditionalMethodVisitor(final MethodMutatorFactory factory,
-      final MutationContext context, final MethodVisitor delegateMethodVisitor) {
+      final MutationContext context, final MethodVisitor delegateMethodVisitor, ClassByteArraySource byteSource) {
     super(factory, context, delegateMethodVisitor);
   }
 

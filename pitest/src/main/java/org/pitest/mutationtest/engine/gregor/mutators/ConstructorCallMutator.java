@@ -36,7 +36,7 @@ public enum ConstructorCallMutator implements MethodMutatorFactory {
     @Override
     public MethodVisitor create(final MutationContext context, final MethodInfo methodInfo,
             final MethodVisitor methodVisitor, ClassByteArraySource byteSource) {
-        return new MethodCallMethodVisitor(methodInfo, context, methodVisitor, this, constructors());
+        return new MethodCallMethodVisitor(methodInfo, context, methodVisitor, this, constructors(), byteSource);
     }
 
     @Override

@@ -67,7 +67,7 @@ class ReplaceWithOverloadingMethod extends AbstractInsnMutator {
 
 	ReplaceWithOverloadingMethod(final MethodMutatorFactory factory, MethodInfo methodInfo,
 			final MutationContext context, final MethodVisitor delegateMethodVisitor, ClassByteArraySource byteSource) {
-		super(factory, methodInfo, context, delegateMethodVisitor, null);
+		super(factory, methodInfo, context, delegateMethodVisitor, byteSource);
 		this.factory = factory;
 		this.context = context;
 		this.byteSource = byteSource;
