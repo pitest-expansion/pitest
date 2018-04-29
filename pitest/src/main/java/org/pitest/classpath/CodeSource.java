@@ -19,7 +19,7 @@ import org.pitest.functional.FCollection;
 import org.pitest.functional.Streams;
 
 /**
- * Provides access to code and tests on the classpath
+ * Provides access to code and tests on the classpath.
  */
 public class CodeSource implements ClassInfoSource {
 

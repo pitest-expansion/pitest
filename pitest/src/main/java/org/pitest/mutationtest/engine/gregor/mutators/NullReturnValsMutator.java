@@ -7,6 +7,7 @@ import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.mutationtest.engine.gregor.AbstractInsnMutator;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
@@ -27,11 +28,11 @@ public enum NullReturnValsMutator implements MethodMutatorFactory {
 
   @Override
   public MethodVisitor create(final MutationContext context,
-      final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
+      final MethodInfo methodInfo, final MethodVisitor methodVisitor, ClassByteArraySource byteSource) {
 
     if (!moreStableMutationExits(methodInfo)) {
       return new NullReturnMethodVisitor(this, methodInfo, context,
-          methodVisitor);
+          methodVisitor, byteSource);
     } else {
       return methodVisitor;
     }
@@ -62,8 +63,8 @@ class NullReturnMethodVisitor extends AbstractInsnMutator {
 
   NullReturnMethodVisitor(final MethodMutatorFactory factory,
       final MethodInfo methodInfo, final MutationContext context,
-      final MethodVisitor writer) {
-    super(factory, methodInfo, context, writer);
+      final MethodVisitor writer, ClassByteArraySource byteSource) {
+    super(factory, methodInfo, context, writer, byteSource);
   }
 
   @Override

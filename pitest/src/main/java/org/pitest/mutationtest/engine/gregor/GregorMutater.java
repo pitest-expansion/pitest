@@ -41,97 +41,131 @@ import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
+/**
+ * Use ClassByteArraySource byteSource interface to replace methods name and
+ * method descriptor in code. ByteSource is an interface and therefore can
+ * accept CatchingByteArraySource, ClassloaderByteArraySource,
+ * ClassPathByteArraySource, ResourceFolderByteArraySource
+ */
 public class GregorMutater implements Mutater {
 
-  private final Map<String, String>       computeCache   = new HashMap<>();
-  private final Predicate<MethodInfo>     filter;
-  private final ClassByteArraySource      byteSource;
-  private final Set<MethodMutatorFactory> mutators       = new HashSet<>();
+    private final Map<String, String> computeCache = new HashMap<>();
+    private final Predicate<MethodInfo> filter;
+    private final ClassByteArraySource byteSource;
 
-  public GregorMutater(final ClassByteArraySource byteSource,
-      final Predicate<MethodInfo> filter,
-      final Collection<MethodMutatorFactory> mutators) {
-    this.filter = filter;
-    this.mutators.addAll(mutators);
-    this.byteSource = byteSource;
-  }
+    private final Set<MethodMutatorFactory> mutators = new HashSet<>();
 
-  @Override
-  public List<MutationDetails> findMutations(
-      final ClassName classToMutate) {
+    public GregorMutater(final ClassByteArraySource byteSource, final Predicate<MethodInfo> filter,
+            final Collection<MethodMutatorFactory> mutators) {
+        System.out.println(byteSource.toString());
+        this.filter = filter;
+        this.mutators.addAll(mutators);
+        this.byteSource = byteSource;
+    }
 
-    final ClassContext context = new ClassContext();
-    context.setTargetMutation(Optional.<MutationIdentifier> empty());
-    Optional<byte[]> bytes = GregorMutater.this.byteSource.getBytes(
-        classToMutate.asInternalName());
-    
-    return bytes.map(findMutations(context))
-        .orElse(Collections.<MutationDetails>emptyList());
+    /**
+     * Implements the interface and use Optional object to find the mutation.
+     * 
+     * @see org.pitest.mutationtest.engine.Mutater#findMutations(org.pitest.classinfo.
+     *      ClassName)
+     */
+    @Override
+    public List<MutationDetails> findMutations(final ClassName classToMutate) {
 
-  }
+        final ClassContext context = new ClassContext();
+        context.setTargetMutation(Optional.<MutationIdentifier>empty());
+        Optional<byte[]> bytes = GregorMutater.this.byteSource.getBytes(classToMutate.asInternalName());
 
-  private Function<byte[], List<MutationDetails>> findMutations(
-      final ClassContext context) {
-    return bytes -> findMutationsForBytes(context, bytes);
-  }
+        return bytes.map(findMutations(context)).orElse(Collections.<MutationDetails>emptyList());
 
-  private List<MutationDetails> findMutationsForBytes(
-      final ClassContext context, final byte[] classToMutate) {
+    }
 
-    final ClassReader first = new ClassReader(classToMutate);
-    final NullVisitor nv = new NullVisitor();
-    final MutatingClassVisitor mca = new MutatingClassVisitor(nv, context,
-        filterMethods(), this.mutators);
+    /**
+     * Function interface, return a list of input and a list of output
+     * 
+     * @param context
+     *            A ClassContext input to be used in the function
+     *            findMutationForBytes
+     * @return Function<byte[], List<MutationDetails>> A function interface with
+     *         input as an array of byte[], output to List<MutationDetails> ??? not
+     *         sure about this
+     */
+    private Function<byte[], List<MutationDetails>> findMutations(final ClassContext context) {
+        return bytes -> findMutationsForBytes(context, bytes);
+    }
 
-    first.accept(mca, ClassReader.EXPAND_FRAMES);
+    /**
+     * Used as a lambda function for findMutations. Read the stream of byte[] from a
+     * class then save the mutations in an ArrayList in ClassContext object. Then
+     * return the ArrayList.
+     * 
+     * @param context
+     *            ClassContext to save the mutations.
+     * @param classToMutat
+     *            An array of byte to scan for possible mutations.
+     * @return List<MutationDetails> A list of mutations saved in the "context"
+     *         parameter
+     */
+    private List<MutationDetails> findMutationsForBytes(final ClassContext context, final byte[] classToMutate) {
 
-    return new ArrayList<>(context.getCollectedMutations());
-  }
+        final ClassReader first = new ClassReader(classToMutate);
+        final NullVisitor nv = new NullVisitor();
+        final MutatingClassVisitor mca = new MutatingClassVisitor(nv, context, filterMethods(), this.mutators,
+                this.byteSource);
 
-  @Override
-  public Mutant getMutation(final MutationIdentifier id) {
+        first.accept(mca, ClassReader.EXPAND_FRAMES);
 
-    final ClassContext context = new ClassContext();
-    context.setTargetMutation(Optional.ofNullable(id));
+        return new ArrayList<>(context.getCollectedMutations());
+    }
 
-    final Optional<byte[]> bytes = this.byteSource.getBytes(id.getClassName()
-        .asJavaName());
+    /**
+     * Use the optimization pattern similar to page 21 of ASM user guide.
+     */
+    @Override
+    public Mutant getMutation(final MutationIdentifier id) {
+        final ClassContext context = new ClassContext();
+        context.setTargetMutation(Optional.ofNullable(id));
 
-    final ClassReader reader = new ClassReader(bytes.get());
-    final ClassWriter w = new ComputeClassWriter(this.byteSource,
-        this.computeCache, FrameOptions.pickFlags(bytes.get()));
-    final MutatingClassVisitor mca = new MutatingClassVisitor(w, context,
-        filterMethods(), FCollection.filter(this.mutators,
-            isMutatorFor(id)));
-    reader.accept(mca, ClassReader.EXPAND_FRAMES);
+        final Optional<byte[]> bytes = this.byteSource.getBytes(id.getClassName().asJavaName());
 
-    final List<MutationDetails> details = context.getMutationDetails(context
-        .getTargetMutation().get());
+        final ClassReader reader = new ClassReader(bytes.get());
+        final ClassWriter w = new ComputeClassWriter(this.byteSource, this.computeCache,
+                FrameOptions.pickFlags(bytes.get()));
+        final MutatingClassVisitor mca = new MutatingClassVisitor(w, context, filterMethods(),
+                FCollection.filter(this.mutators, isMutatorFor(id)), this.byteSource);
+        reader.accept(mca, ClassReader.EXPAND_FRAMES);
+        final List<MutationDetails> details = context.getMutationDetails(context.getTargetMutation().get());
+        return new Mutant(details.get(0), w.toByteArray());
 
-    return new Mutant(details.get(0), w.toByteArray());
+    }
 
-  }
+    /**
+     * @return Return the byteSource object. Useful for extracting data about the
+     *         current class and potentially manipulate it (methods, overloading
+     *         methods/constructors)
+     */
+    public ClassByteArraySource getByteSource() {
+        return this.byteSource;
+    }
 
-  private static Predicate<MethodMutatorFactory> isMutatorFor(
-      final MutationIdentifier id) {
-    return a -> id.getMutator().equals(a.getGloballyUniqueId());
-  }
+    private static Predicate<MethodMutatorFactory> isMutatorFor(final MutationIdentifier id) {
+        return a -> id.getMutator().equals(a.getGloballyUniqueId());
+    }
 
-  private Predicate<MethodInfo> filterMethods() {
-    return and(this.filter, filterSyntheticMethods(),
-        isGeneratedEnumMethod().negate(), isGroovyClass().negate());
-  }
+    private Predicate<MethodInfo> filterMethods() {
+        return and(this.filter, filterSyntheticMethods(), isGeneratedEnumMethod().negate(), isGroovyClass().negate());
+    }
 
-  private static Predicate<MethodInfo> isGroovyClass() {
-    return a -> a.isInGroovyClass();
-  }
+    private static Predicate<MethodInfo> isGroovyClass() {
+        return a -> a.isInGroovyClass();
+    }
 
-  private static Predicate<MethodInfo> filterSyntheticMethods() {
-    return a -> !a.isSynthetic() || a.getName().startsWith("lambda$");
-  }
+    private static Predicate<MethodInfo> filterSyntheticMethods() {
+        return a -> !a.isSynthetic() || a.getName().startsWith("lambda$");
+    }
 
-  private static Predicate<MethodInfo> isGeneratedEnumMethod() {
-    return a -> a.isGeneratedEnumMethod();
-  }
+    private static Predicate<MethodInfo> isGeneratedEnumMethod() {
+        return a -> a.isGeneratedEnumMethod();
+    }
 
 }

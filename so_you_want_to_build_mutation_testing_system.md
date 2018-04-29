@@ -2,11 +2,11 @@
 
 ## Introduction
 
-There have been a lot mutation testing systems, but very few have them have seen succesful use in industry.
+There have been a lot mutation testing systems, but very few have them have seen succesfull use in industry.
 
 This document is a set of notes that might be helpful for anyone thinking of implementing a mutation testing system for another language.
 
-It represents some of the things we learnt while creating pitest. The choices made by pitest are not necessarily the best choices for your system. Some of these choices are appropriate only because of the particular quirks of Java and the JVM, and some of them are simply the first idea that we had.
+It represents some of the things we learnt while creating pitest. The choices made by pitest are not neccessarily the best choices for your system. Some of these choices are appropriate only because of the particular quirks of Java and the JVM, and some of them are simply the first idea that we had.
 
 ## Things to consider
 
@@ -175,5 +175,3 @@ Schmeta have some nice properties
 3. A single linked binary can contain all mutants
 
 But will result in large classes - you may hit language limits.
-
-

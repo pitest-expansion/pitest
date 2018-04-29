@@ -18,19 +18,24 @@ package org.pitest.mutationtest.engine.gregor.mutators;
 import java.util.function.BiFunction;
 
 import org.objectweb.asm.MethodVisitor;
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
 
+/**
+ * The void method call mutator removes method calls to void methods. 
+ *
+ */
 public enum VoidMethodCallMutator implements MethodMutatorFactory {
 
   VOID_METHOD_CALL_MUTATOR;
 
   @Override
   public MethodVisitor create(final MutationContext context,
-      final MethodInfo methodInfo, final MethodVisitor methodVisitor) {
+      final MethodInfo methodInfo, final MethodVisitor methodVisitor, ClassByteArraySource byteSource) {
     return new MethodCallMethodVisitor(methodInfo, context, methodVisitor,
-        this, voidMethods());
+        this, voidMethods(), byteSource);
   }
 
   @Override
